@@ -37,7 +37,7 @@
 
 ---
 
-## 2. Analyse des dépôts imbriqués / sous-modules
+## 2. Analyse des dépôts imbriqués / sous-modules (Gitlinks 160000)
 
 ### Constat technique :
 La commande `git submodule status` a échoué avec l'erreur :
@@ -45,15 +45,67 @@ La commande `git submodule status` a échoué avec l'erreur :
 fatal: no submodule mapping found in .gitmodules for path 'bencium-marketplace'
 No .gitmodules file
 ```
+Dans l'index git, `bencium-marketplace` et `ui-ux-pro-max-skill` étaient enregistrés sous le mode `160000` (gitlink) sans fichier `.gitmodules`.
 
-### Diagnostic :
-* `bencium-marketplace/` contient son propre dossier `.git/` pointant vers `https://github.com/bencium/bencium-marketplace.git`.
-* `ui-ux-pro-max-skill/` contient son propre dossier `.git/` pointant vers `https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git`.
-* **Problème** : Dans le dépôt parent `skill-all`, ils ont été ajoutés sous le mode `160000` (gitlink), mais **aucun fichier `.gitmodules` n'existe**. Git les voit donc comme des dépôts imbriqués orphelins, ce qui peut créer des anomalies lors des clones ou pulls par des tiers.
+### Détails d'origine, commits et licences :
 
-### Proposition pour l'Étape 7 :
-* **Option A** : Déclarer proprement les sous-modules dans un fichier `.gitmodules` officiel.
-* **Option B** : Retirer leur dossier `.git` interne pour les intégrer directement comme dossiers standards sous `third-party/`.
+#### A. `bencium-marketplace`
+* **URL d'origine (git remote)** : `https://github.com/bencium/bencium-marketplace.git`
+* **Commit courant** : `5de46a39b4640fa419560cd0b67e4c4b50dac802`
+* **Texte de la licence trouvée** : `MIT License`
+```text
+MIT License
+
+Copyright (c) 2026 bencium.io
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+* **Statut de redistribution** : **Autorisée** (Licence MIT standard). Conforme aux consignes, son `.git/` sera purgé et le contenu sera logé dans `third-party/bencium-marketplace/` avec un fichier `SOURCE.md`.
+
+#### B. `ui-ux-pro-max-skill`
+* **URL d'origine (git remote)** : `https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git`
+* **Commit courant** : `616663179c5f9b5e2b3e07cab23ac9cad76378f3`
+* **Texte de la licence trouvée** : `MIT License`
+```text
+MIT License
+
+Copyright (c) 2024 Next Level Builder
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+* **Statut et destination** : Retiré de l'index (`git rm --cached`), archivé dans `_archive/ui-ux-pro-max-skill` sans son `.git`, et référencé dans `THIRD_PARTY_NOTICES.md`. La version canonique conservée et active est `.agents/skills/ui-ux-pro-max` (v2.15.0).
 
 ---
 
@@ -70,20 +122,29 @@ Une comparaison approfondie (`diff -r`) révèle :
 
 ## 4. Analyse des éléments non documentés (`stride-lab`, `tranmoney`, `index.html`)
 
-1. **`stride-lab/`** :
-   * Vitrine complète 3D interactive pour sneaker de luxe (Three.js, GSAP ScrollTrigger, typographie Syne / Plus Jakarta Sans).
-   * Contient son propre `index.html` (53 Ko) et ses visuels (`assets/`).
-2. **`index.html` et `assets/` à la racine** :
-   * Une comparaison par hash / byte-for-byte confirme que `index.html` à la racine est une **copie miroir exacte à 100%** de `stride-lab/index.html`.
-   * Le dossier `assets/` à la racine est une **copie miroir exacte** de `stride-lab/assets/`.
-   * Ce sont des doublons orphelins à la racine qui polluent la vue du dépôt.
-3. **`tranmoney/`** :
-   * Vitrine FinTech 3D complète (Dipa Inhouse, pods ovales, scrollytelling 3D vectoriel, laser QR temps réel).
-   * Sert de référence de test et de source pour le template `ultra-3d-web-experience/templates/fintech-mobile-spatial/`.
+1. **`stride-lab/` vs `ultra-3d-web-experience/templates/sneaker-configurator/`** :
+   * Une comparaison approfondie (`diff -rq`) montre qu'ils **ne sont pas identiques** :
+     - `stride-lab/` possède une télémétrie HUD avancée (1665 lignes), des textes éditoriaux en français, les polices Syne / Plus Jakarta Sans, un fichier `README.md` et des textures spécifiques (`knit-detail.jpg`, etc.).
+     - `templates/sneaker-configurator/` est un template générique condensé en anglais (820 lignes).
+   * **Action appliquée** : Déplacement de `stride-lab/` vers `demos/stride-lab/` pour préserver cette démo 3D fonctionnelle sans encombrer la racine.
+
+2. **`index.html` et `assets/` à la racine & GitHub Pages** :
+   * Vérification GitHub Pages : `curl https://api.github.com/repos/seo-ben/skill-all/pages` renvoie **404 Not Found** (GitHub Pages n'est pas activé sur ce dépôt).
+   * Une comparaison par hash confirme que `index.html` et `assets/` à la racine sont des **copies miroirs exactes à 100%** de `stride-lab/`.
+   * **Action appliquée** : Déplacement dans `_archive/root-assets/` et `_archive/index.html`.
+
+3. **`tranmoney/` vs `ultra-3d-web-experience/templates/fintech-mobile-spatial/`** :
+   * Une comparaison approfondie (`diff -rq`) confirme que le code HTML/JS/CSS et l'ensemble des 11 visuels sont **100% identiques**.
+   * Seul le fichier `README.md` était présent dans `tranmoney/`.
+   * **Action appliquée** : Copie du `README.md` vers le template source, puis archivage de `tranmoney/` dans `_archive/tranmoney/`.
 
 ---
 
-## 5. Prochaines étapes
+## 5. Synthèse des actions de l'Étape 0.5 (Préparation & Assainissement)
 
-* Attente de validation de l'Étape 0 par l'utilisateur.
-* Dès accord : exécution de l'Étape 1 (préparation de l'arborescence cible `.agents/skills/`) et de l'Étape 2 (fusion `bencium-impact-designer` + `bencium-controlled-ux-designer` vers `design-direction`).
+1. `bencium-marketplace` : Licence MIT (redistribution autorisée), purge du dossier `.git/`, transfert dans `third-party/bencium-marketplace/` avec `SOURCE.md`.
+2. `ui-ux-pro-max-skill` : `git rm --cached`, transfert dans `_archive/ui-ux-pro-max-skill/` (sans `.git`), tracé dans `THIRD_PARTY_NOTICES.md`.
+3. `ui-ux-pro-max` (v2.13.0 racine) : Déplacement vers `_archive/ui-ux-pro-max/`.
+4. `index.html` et `assets/` (racine) : Déplacement vers `_archive/`.
+5. `stride-lab/` : Déplacement vers `demos/stride-lab/`.
+6. `tranmoney/` : Déplacement vers `_archive/tranmoney/`.
