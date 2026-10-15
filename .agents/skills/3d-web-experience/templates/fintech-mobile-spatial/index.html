@@ -35,6 +35,16 @@
       --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
       --shadow-card: 0 16px 40px -10px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.03);
       --shadow-hover: 0 24px 50px -10px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.04);
+
+      /* Variables Spatiales 3D & Géométriques (valeur de départ, à adapter) */
+      --z-back: -35px;        /* Plan orbital arrière (valeur de départ, à adapter) */
+      --z-mid: 25px;          /* Plan sujet / mockup mobile (valeur de départ, à adapter) */
+      --z-sheen: 28px;        /* Reflet spéculaire 3D (valeur de départ, à adapter) */
+      --z-laser: 30px;        /* Faisceau laser scanner (valeur de départ, à adapter) */
+      --z-hover: 32px;        /* Élévation sujet au survol (valeur de départ, à adapter) */
+      --z-badge: 75px;        /* Micro-badges flottants avant-plan (valeur de départ, à adapter) */
+      --radius-oval-x: clamp(90px, 12vw, 130px); /* Rayon horizontal stade ovale (valeur de départ, à adapter) */
+      --radius-oval-y: clamp(65px, 8vw, 85px);   /* Rayon vertical stade ovale (valeur de départ, à adapter) */
     }
 
     * {
@@ -680,7 +690,7 @@
 
     /* True Oval / Stadium shape */
     .shape-oval-stadium-pod {
-      border-radius: clamp(90px, 12vw, 130px) / clamp(65px, 8vw, 85px);
+      border-radius: var(--radius-oval-x) / var(--radius-oval-y);
     }
 
     /* Oval Arch shape (Arched dome top, soft curved base) */
@@ -697,7 +707,7 @@
       border: 1.5px dashed rgba(0, 82, 255, 0.22);
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) translateZ(-35px);
+      transform: translate(-50%, -50%) translateZ(var(--z-back));
       pointer-events: none;
       z-index: 1;
       animation: rotateSlow 60s linear infinite;
@@ -729,7 +739,7 @@
       border: 1px solid rgba(15, 23, 42, 0.08);
       box-shadow: 0 24px 56px -12px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.05);
       transition: transform 0.6s var(--ease-fluid), box-shadow 0.6s var(--ease-fluid);
-      transform: translateZ(25px);
+      transform: translateZ(var(--z-mid));
     }
 
     /* 3D Specular Glass Glare Sheen */
@@ -741,11 +751,11 @@
       background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.08) 35%, transparent 60%);
       pointer-events: none;
       z-index: 3;
-      transform: translateZ(28px);
+      transform: translateZ(var(--z-sheen));
     }
 
     .pro-stage-pod:hover .phone-showcase-wrapper img {
-      transform: scale(1.025) translateY(-4px) translateZ(32px);
+      transform: scale(1.025) translateY(-4px) translateZ(var(--z-hover));
       box-shadow: 0 34px 72px -12px rgba(15, 23, 42, 0.22), 0 6px 18px rgba(15, 23, 42, 0.08);
     }
 
@@ -762,7 +772,7 @@
       z-index: 5;
       pointer-events: none;
       animation: scanLaser 2.6s ease-in-out infinite alternate;
-      transform: translateZ(30px);
+      transform: translateZ(var(--z-laser));
     }
 
     @keyframes scanLaser {
@@ -804,7 +814,7 @@
       pointer-events: none;
       white-space: nowrap;
       transform-style: preserve-3d;
-      transform: translateZ(75px);
+      transform: translateZ(var(--z-badge));
       will-change: transform, opacity;
     }
 
