@@ -71,9 +71,9 @@ function findDuplicateBlocks(skillContents, minLines = 20) {
 }
 
 function validate() {
-  console.log('🔍 Validation des compétences dans .agents/skills/\n');
+  console.log('🔍 Validating skills in .agents/skills/\n');
   if (!fs.existsSync(SKILLS_DIR)) {
-    console.error(`❌ Dossier introuvable: ${SKILLS_DIR}`);
+    console.error(`❌ Directory not found: ${SKILLS_DIR}`);
     process.exit(1);
   }
 
@@ -94,7 +94,7 @@ function validate() {
     const failures = [];
 
     if (!fs.existsSync(skillFile)) {
-      failures.push('Fichier SKILL.md manquant');
+      failures.push('Missing SKILL.md file');
       allFailures[dirName] = failures;
       continue;
     }
@@ -106,31 +106,31 @@ function validate() {
     // 1. YAML frontmatter valide
     const fm = parseFrontmatter(content);
     if (!fm) {
-      failures.push('Frontmatter YAML invalide ou absent');
+      failures.push('Invalid or missing YAML frontmatter');
     } else {
       // 2. name = nom du dossier
       if (fm.fields.name !== dirName) {
-        failures.push(`Champ 'name' (${fm.fields.name || 'aucun'}) différent du dossier (${dirName})`);
+        failures.push(`'name' field (${fm.fields.name || 'none'}) does not match directory name (${dirName})`);
       }
 
-      // 3. description contenant "Do not use" ou "Ne pas utiliser"
+      // 3. description containing negative constraint
       const desc = fm.fields.description || '';
       if (!desc) {
-        failures.push("Description absente du frontmatter");
+        failures.push("Missing description in frontmatter");
       } else {
         const hasNegativeConstraint = /do not use|ne pas utiliser/i.test(desc);
         if (!hasNegativeConstraint) {
-          failures.push("Description sans clause d'exclusion négative ('Do not use' ou 'Ne pas utiliser')");
+          failures.push("Description missing negative constraint ('Do not use' or 'Ne pas utiliser')");
         }
       }
     }
 
-    // 4. SKILL.md ≤ 400 lignes
+    // 4. SKILL.md ≤ 400 lines
     if (lines.length > 400) {
-      failures.push(`Taille excessive: ${lines.length} lignes (> 400 lignes max)`);
+      failures.push(`Excessive length: ${lines.length} lines (> 400 lines max)`);
     }
 
-    // 5. Chemins relatifs cités existants (SKILL.md, references/ et templates/)
+    // 5. Relative paths exist (SKILL.md, references/ and templates/)
     function getLineNumber(text, index) {
       return text.slice(0, index).split('\n').length;
     }
@@ -141,7 +141,7 @@ function validate() {
       const ext = path.extname(filePath).toLowerCase();
       const relFile = path.relative(relBaseDir, filePath);
 
-      // A. Liens Markdown [label](target)
+      // A. Markdown links [label](target)
       if (ext === '.md') {
         const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
         let match;
@@ -149,7 +149,7 @@ function validate() {
           const rawTarget = match[2].trim();
           const line = getLineNumber(fileContent, match.index);
           if (rawTarget.startsWith('file:///')) {
-            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            failures.push(`Non-portable 'file:///' link forbidden in ${relFile} (line ${line}): '${rawTarget}'`);
             continue;
           }
           const target = rawTarget.split('#')[0].trim();
@@ -158,12 +158,12 @@ function validate() {
           }
           const targetPath = path.resolve(path.dirname(filePath), target);
           if (!fs.existsSync(targetPath)) {
-            failures.push(`Lien rompu dans ${relFile} (ligne ${line}): '${match[2]}' (introuvable: ${targetPath})`);
+            failures.push(`Broken link in ${relFile} (line ${line}): '${match[2]}' (not found: ${targetPath})`);
           }
         }
       }
 
-      // B. Balises HTML src="..." et href="..."
+      // B. HTML tags src="..." and href="..."
       if (ext === '.html') {
         const tagRegex = /(?:src|href)=["']([^"']+)["']/g;
         let match;
@@ -171,7 +171,7 @@ function validate() {
           const rawTarget = match[1].trim();
           const line = getLineNumber(fileContent, match.index);
           if (rawTarget.startsWith('file:///')) {
-            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            failures.push(`Non-portable 'file:///' link forbidden in ${relFile} (line ${line}): '${rawTarget}'`);
             continue;
           }
           const target = rawTarget.split('#')[0].split('?')[0].trim();
@@ -180,12 +180,12 @@ function validate() {
           }
           const targetPath = path.resolve(path.dirname(filePath), target);
           if (!fs.existsSync(targetPath)) {
-            failures.push(`Asset HTML rompu dans ${relFile} (ligne ${line}): '${rawTarget}' (introuvable: ${targetPath})`);
+            failures.push(`Broken HTML asset in ${relFile} (line ${line}): '${rawTarget}' (not found: ${targetPath})`);
           }
         }
       }
 
-      // C. Détection des url(...) CSS (dans .css ou blocs <style> de .html)
+      // C. CSS url(...) detection (in .css or <style> blocks in .html)
       if (ext === '.css' || ext === '.html') {
         const cssUrlRegex = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
         let match;
@@ -193,7 +193,7 @@ function validate() {
           const rawTarget = match[1].trim();
           const line = getLineNumber(fileContent, match.index);
           if (rawTarget.startsWith('file:///')) {
-            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            failures.push(`Non-portable 'file:///' link forbidden in ${relFile} (line ${line}): '${rawTarget}'`);
             continue;
           }
           const target = rawTarget.split('#')[0].split('?')[0].trim();
@@ -202,12 +202,12 @@ function validate() {
           }
           const targetPath = path.resolve(path.dirname(filePath), target);
           if (!fs.existsSync(targetPath)) {
-            failures.push(`Asset CSS url() rompu dans ${relFile} (ligne ${line}): '${rawTarget}' (introuvable: ${targetPath})`);
+            failures.push(`Broken CSS url() asset in ${relFile} (line ${line}): '${rawTarget}' (not found: ${targetPath})`);
           }
         }
       }
 
-      // D. Détection des chaînes de chemins d'actifs 3D et images dans le code JS (.js ou blocs <script>)
+      // D. JS asset path strings detection (.js or <script> blocks)
       function checkJsAssets(jsCode, baseOffset = 0) {
         const jsAssetRegex = /['"]([^'"\s]+?\.(?:jpg|jpeg|png|webp|glb|gltf|hdr))['"]/gi;
         let match;
@@ -215,7 +215,7 @@ function validate() {
           const rawTarget = match[1].trim();
           const line = getLineNumber(fileContent, baseOffset + match.index);
           if (rawTarget.startsWith('file:///')) {
-            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            failures.push(`Non-portable 'file:///' link forbidden in ${relFile} (line ${line}): '${rawTarget}'`);
             continue;
           }
           const target = rawTarget.split('#')[0].split('?')[0].trim();
@@ -224,7 +224,7 @@ function validate() {
           }
           const targetPath = path.resolve(path.dirname(filePath), target);
           if (!fs.existsSync(targetPath)) {
-            failures.push(`Asset JS rompu dans ${relFile} (ligne ${line}): '${rawTarget}' (introuvable: ${targetPath})`);
+            failures.push(`Broken JS asset in ${relFile} (line ${line}): '${rawTarget}' (not found: ${targetPath})`);
           }
         }
       }
@@ -240,10 +240,10 @@ function validate() {
       }
     }
 
-    // A. Vérification dans SKILL.md
+    // A. SKILL.md
     checkFileLinks(skillFile, skillPath);
 
-    // B. Vérification récursive dans references/
+    // B. references/
     const referencesDir = path.join(skillPath, 'references');
     if (fs.existsSync(referencesDir)) {
       const refFiles = fs.readdirSync(referencesDir, { withFileTypes: true });
@@ -254,7 +254,7 @@ function validate() {
       }
     }
 
-    // C. Vérification récursive dans templates/
+    // C. templates/
     const templatesDir = path.join(skillPath, 'templates');
     if (fs.existsSync(templatesDir)) {
       function walkDir(dir) {
@@ -273,33 +273,33 @@ function validate() {
 
     if (failures.length === 0) {
       passedSkills++;
-      console.log(`  ✅ [PASS] ${dirName} (${lines.length} lignes)`);
+      console.log(`  ✅ [PASS] ${dirName} (${lines.length} lines)`);
     } else {
-      console.log(`  ❌ [FAIL] ${dirName} (${lines.length} lignes)`);
+      console.log(`  ❌ [FAIL] ${dirName} (${lines.length} lines)`);
       failures.forEach(f => console.log(`      - ${f}`));
       allFailures[dirName] = failures;
     }
   }
 
-  // 6. Pas de bloc dupliqué de plus de 20 lignes entre deux skills
-  console.log('\n🔎 Analyse des blocs dupliqués (> 20 lignes)...');
+  // 6. No duplicate blocks > 20 lines between two skills
+  console.log('\n🔎 Checking for duplicate blocks (> 20 lines)...');
   const duplicateBlocks = findDuplicateBlocks(skillRawContents, 20);
   if (duplicateBlocks.length > 0) {
-    console.log(`  ❌ ${duplicateBlocks.length} bloc(s) dupliqué(s) détecté(s) :`);
+    console.log(`  ❌ ${duplicateBlocks.length} duplicate block(s) detected:`);
     duplicateBlocks.forEach(d => {
-      console.log(`      - Entre '${d.skillA}' et '${d.skillB}' : "${d.sample}"`);
+      console.log(`      - Between '${d.skillA}' and '${d.skillB}': "${d.sample}"`);
     });
   } else {
-    console.log('  ✅ Aucun bloc dupliqué (> 20 lignes) entre deux compétences.');
+    console.log('  ✅ No duplicate blocks (> 20 lines) found between skills.');
   }
 
   console.log('\n=======================================');
-  console.log(`Bilan : ${passedSkills}/${totalSkills} compétences validées.`);
+  console.log(`Summary: ${passedSkills}/${totalSkills} skills validated.`);
   if (Object.keys(allFailures).length > 0 || duplicateBlocks.length > 0) {
-    console.log('Statut : ⚠️  Des vérifications ont échoué.');
+    console.log('Status: ⚠️  Some checks failed.');
     process.exit(1);
   } else {
-    console.log('Statut : 🎉 Toutes les règles de qualité sont respectées !');
+    console.log('Status: 🎉 All quality rules passed!');
     process.exit(0);
   }
 }
