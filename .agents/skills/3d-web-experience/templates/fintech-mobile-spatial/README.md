@@ -51,16 +51,12 @@ fintech-mobile-spatial/
 ├── index.html        # Expérience 3D complète (HTML5, Vanilla CSS 3D & GSAP ScrollTrigger)
 ├── README.md         # Documentation de l'architecture
 └── assets/           # Visuels et mockups applicatifs
-    ├── app-hero.jpg
     ├── hero-phone.png
-    ├── hero-phone-on-white.jpg
-    ├── instant-pay.jpg
     ├── merchant-qr.jpg
     ├── send-contact.jpg
     ├── bills-airtime.jpg
     ├── cash-agents.jpg
-    ├── international.jpg
-    └── titanium-card.jpg
+    └── international.jpg
 ```
 
 ---
