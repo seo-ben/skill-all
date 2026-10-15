@@ -1,6 +1,6 @@
 ---
 name: 3d-web-experience
-description: Build 3D spatial web experiences and scrollytelling pages with Three.js and GSAP. Use when creating interactive 3D showcases, product configurators, or scrollytelling landing pages. Do not use for simple 2D websites or non-interactive canvas applications.
+description: Construct 3D spatial web experiences with real vectorial geometry, continuous orbital rotation, scrollytelling pinning, and editorial layouts. Use when building interactive 3D showcases, product configurators, or spatial landing pages with Three.js and GSAP. Do not use for simple 2D text pages, non-interactive canvas applications, or low-power embedded devices without WebGL support.
 ---
 
 # 3D Spatial Web Experience & Design Engine
@@ -98,17 +98,35 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
      ```
 3. **Low-Power GPU Graceful Degradation** :
    * Monitor frame rate with a moving average. If render loop falls below 30 fps, disable shadow maps (`renderer.shadowMap.enabled = false`), lower anti-aliasing, and reduce particle counts.
-4. **Memory Cleanup** :
-   * On component unmount, dispose geometries, materials, and textures to prevent WebGL context leaks:
+4. **Memory Cleanup & Resource Teardown** :
+   * On component unmount or route transition, dispose geometries, materials, and textures to prevent WebGL memory leaks, cancel the active `requestAnimationFrame` loop, and delegate ScrollTrigger cleanup to `motion-gsap`:
      ```javascript
+     // 1. Cancel animation frame loop
+     if (animationFrameId) {
+       cancelAnimationFrame(animationFrameId);
+       animationFrameId = null;
+     }
+
+     // 2. Dispose Three.js scene assets (geometries, materials, textures)
      scene.traverse(obj => {
        if (obj.geometry) obj.geometry.dispose();
        if (obj.material) {
-         if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
-         else obj.material.dispose();
+         const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+         materials.forEach(m => {
+           // Dispose associated textures
+           ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'alphaMap', 'envMap'].forEach(key => {
+             if (m[key] && typeof m[key].dispose === 'function') {
+               m[key].dispose();
+             }
+           });
+           m.dispose();
+         });
        }
      });
      renderer.dispose();
+
+     // 3. Delegate ScrollTrigger lifecycle and context cleanup to motion-gsap
+     // (e.g. gsap.matchMedia cleanup or ScrollTrigger.getAll().forEach(t => t.kill()))
      ```
 
 ---
