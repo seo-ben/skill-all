@@ -391,10 +391,12 @@
 
     const canvas = document.getElementById('webgl-canvas');
     const fallback = document.getElementById('webgl-fallback');
+    const scrollHint = document.querySelector('.gold-scroll-hint');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (!isWebGLAvailable()) {
       canvas.style.display = 'none';
+      if (scrollHint) scrollHint.style.display = 'none';
       if (fallback) fallback.style.display = 'flex';
     } else {
       initThreeScene();
@@ -411,6 +413,7 @@
         });
       } catch (e) {
         canvas.style.display = 'none';
+        if (scrollHint) scrollHint.style.display = 'none';
         if (fallback) fallback.style.display = 'flex';
         return;
       }

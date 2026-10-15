@@ -413,10 +413,12 @@
 
     const canvas = document.getElementById('webgl-canvas');
     const fallback = document.getElementById('webgl-fallback');
+    const hud = document.querySelector('.hud-telemetry');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (!isWebGLAvailable()) {
       canvas.style.display = 'none';
+      if (hud) hud.style.display = 'none';
       if (fallback) fallback.style.display = 'flex';
     } else {
       initThreeScene();
@@ -433,6 +435,7 @@
         });
       } catch (e) {
         canvas.style.display = 'none';
+        if (hud) hud.style.display = 'none';
         if (fallback) fallback.style.display = 'flex';
         return;
       }

@@ -612,11 +612,13 @@
     const canvas = document.getElementById('webgl-canvas');
     const fallback = document.getElementById('webgl-fallback');
     const dragSurface = document.getElementById('drag-surface');
+    const angleHud = document.querySelector('.angle-hud');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (!isWebGLAvailable()) {
       canvas.style.display = 'none';
       if (dragSurface) dragSurface.style.display = 'none';
+      if (angleHud) angleHud.style.display = 'none';
       if (fallback) fallback.style.display = 'flex';
     } else {
       initThreeScene();
@@ -634,6 +636,7 @@
       } catch (e) {
         canvas.style.display = 'none';
         if (dragSurface) dragSurface.style.display = 'none';
+        if (angleHud) angleHud.style.display = 'none';
         if (fallback) fallback.style.display = 'flex';
         return;
       }
