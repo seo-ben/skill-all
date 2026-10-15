@@ -33,3 +33,22 @@ node scripts/scaffold-3d.js --preset fintech --out ./my-fintech-app
 ```
 
 The script copies the template's `index.html`, all local `assets/` (photography, textures), and generates a minimal `package.json` with an `npx serve` command.
+
+---
+
+## 3. Preset Verification Status
+
+| Preset Key | Template Name | HTTP Status | Erreurs console | Syntaxe JS | Images locales | Statut prouvé |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **`agency`** | Creative & Design Studio Showcase | 200 | non testé (navigateur indisponible) | Validée (`node -c`) | 2/2 présentes | Fichiers locaux & syntaxe valides |
+| **`hair-beauty`** | Cosmetics 3D Flow | 200 | non testé (navigateur indisponible) | Validée (`node -c`) | Aucune image requise | Fichiers locaux & syntaxe valides |
+| **`fashion`** | Fashion 3D Lookbook | 200 | non testé (navigateur indisponible) | Validée (`node -c`) | Aucune image requise | Fichiers locaux & syntaxe valides |
+| **`fintech`** | Mobile FinTech Spatial | 200 | non testé (navigateur indisponible) | Validée (`node -c`) | 10/10 présentes | Fichiers locaux & syntaxe valides |
+| **`sneakers`** | Footwear 3D Configurator | 200 | non testé (navigateur indisponible) | Validée (`node -c`) | 4/4 présentes | Fichiers locaux & syntaxe valides |
+| **`tech`** | Tech & Particle Core | 200 | non testé (navigateur indisponible) | Validée (`node -c`) | Aucune image requise | Fichiers locaux & syntaxe valides |
+
+> **Limitations et périmètre des tests :**
+> - **Erreurs console** : Non testé (aucun navigateur disponible dans l'environnement de sandbox pour capturer les logs runtime ou le contexte WebGL).
+> - **Dépendances CDN** : Les dépendances distantes (Three.js r128, GSAP 3.12.2) n'ont pas pu être vérifiées sans accès réseau.
+> - **Éléments prouvés uniquement** : Réponse serveur HTTP 200 en local, syntaxe JavaScript valide vérifiée par l'interpréteur (`node -c`), et intégrité physique des assets locaux référencés.
+
