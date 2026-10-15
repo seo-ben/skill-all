@@ -1,8 +1,6 @@
 ---
-name: bencium-innovative-ux-designer
-description: Develop an independent visual language and turn the human-chosen direction into a production-ready graphic, brand, campaign, publication, web, or product system. Use when originality and differentiation matter enough to escape generic AI and Big Tech aesthetics. Guides a minimum-evidence start, ten isolated typography-led HTML design directions made only from type, color, and space, visual-first human judgement, explicit commitment, and concrete Round 2 production. Do not use for routine UI fixes, small components, or applying an existing design system.
-metadata:
-  version: 3.1.5
+name: innovative-design
+description: Développe une identité visuelle indépendante et originale sans s'inspirer du design web contemporain, à travers 10 directions typographiques pures en HTML (A à J). À utiliser uniquement lorsque l'utilisateur demande explicitement une exploration créative originale, sans référence externe ou issue du sujet lui-même. Ne pas utiliser pour des interfaces SaaS conventionnelles, des corrections de bugs UI ou des composants isolés. Ne pas utiliser avec design-direction ; si les deux semblent applicables, demande à l'utilisateur lequel il préfère.
 ---
 
 # Innovative UX Designer V3
