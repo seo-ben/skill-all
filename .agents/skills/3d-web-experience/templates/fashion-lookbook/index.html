@@ -314,7 +314,6 @@
 
     const canvas = document.getElementById('webgl-canvas');
     const fallback = document.getElementById('webgl-fallback');
-    const sceneControls = document.querySelectorAll('.angle-hud, .hud-telemetry, .scene-controls');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     initThreeScene();
@@ -330,7 +329,6 @@
         });
       } catch (e) {
         canvas.style.display = 'none';
-        sceneControls.forEach(el => el.style.display = 'none');
         if (fallback) fallback.style.display = 'flex';
         return;
       }
