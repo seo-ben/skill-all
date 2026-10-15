@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STRIDE LAB &mdash; Laboratoire de Morphologie Digitale &amp; Ing&eacute;nierie Cin&eacute;tique</title>
+  
+  <!-- Typography : Distinctive, Characterful Swiss Architectural Pair (Syne + Plus Jakarta Sans + JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. SWISS DESIGN SYSTEM TOKEN MATRIX (NEO-SWISS MINIMALISM #FFFFFF)
+       ========================================================================== */
+    :root {
+      --bg: #ffffff;
+      --bg-subtle: #f8f9fa;
+      --surface: #ffffff;
+      --text: #0a0a0c;
+      --text-muted: #5e6472;
+      --text-dim: #8d94a5;
+      --border: #e8eaee;
+      --border-dark: #1e2024;
+      --accent: #eb0029; /* Rouge Fédéral Suisse */
+      --accent-subtle: rgba(235, 0, 41, 0.08);
+      --font-display: 'Syne', -apple-system, sans-serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    html {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      scroll-behavior: auto;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    ::selection {
+      background-color: var(--text);
+      color: #ffffff;
+    }
+
+    /* Architectural Swiss Grid Lines (Subtle Vector Matrix) */
+    .swiss-grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      display: grid;
+      grid-template-columns: 6% 1fr 1fr 1fr 1fr 6%;
+      border-left: 1px solid rgba(10, 10, 12, 0.03);
+      border-right: 1px solid rgba(10, 10, 12, 0.03);
+    }
+
+    .swiss-grid-col {
+      border-right: 1px solid rgba(10, 10, 12, 0.035);
+      height: 100%;
+    }
+
+    /* ==========================================================================
+       2. FULL-BLEED FIXED 3D CANVAS & INTERACTION LAYER (RÈGLE 1 & 3)
+       ========================================================================== */
+    #webgl-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      display: block;
+    }
+
+    .interaction-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      pointer-events: auto;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .interaction-overlay:active {
+      cursor: grabbing;
+    }
+
+    /* ==========================================================================
+       3. NAVIGATION BAR (EDITORIAL SWISS RATIO)
+       ========================================================================== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 2.2rem 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 80;
+      pointer-events: auto;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%);
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .swiss-cross {
+      width: 18px;
+      height: 18px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .swiss-cross::before, .swiss-cross::after {
+      content: '';
+      position: absolute;
+      background: var(--accent);
+    }
+
+    .swiss-cross::before {
+      width: 18px;
+      height: 5px;
+    }
+
+    .swiss-cross::after {
+      width: 5px;
+      height: 18px;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .brand-location {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding-left: 0.8rem;
+      border-left: 1px solid var(--border);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.25s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: var(--text);
+      transition: width 0.3s var(--ease-out);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-action {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0.75rem 1.6rem;
+      border: 1px solid var(--border-dark);
+      border-radius: 2px;
+      background: transparent;
+      transition: all 0.3s var(--ease-out);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-action:hover {
+      background: var(--text);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       4. CAMERA FOCUS HUD (RÈGLE 3 : PROFIL, FACE, SEMELLE, TALON)
+       ========================================================================== */
+    .camera-hud {
+      position: fixed;
+      bottom: 2.8rem;
+      right: 6%;
+      z-index: 70;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      padding: 0.35rem;
+      border-radius: 4px;
+      box-shadow: 0 10px 30px rgba(10, 10, 12, 0.04);
+      pointer-events: auto;
+    }
+
+    .hud-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      padding: 0 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-right: 1px solid var(--border);
+    }
+
+    .camera-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      padding: 0.55rem 1rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .camera-btn:hover {
+      color: var(--text);
+      background: var(--bg-subtle);
+    }
+
+    .camera-btn.active {
+      background: var(--text);
+      color: #ffffff;
+    }
+
+    /* Live Telemetry HUD (Bottom-Left Coordinates) */
+    .telemetry-hud {
+      position: fixed;
+      bottom: 2.8rem;
+      left: 6%;
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      pointer-events: none;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums lining-nums;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      padding: 0.6rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .telemetry-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .telemetry-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+
+    /* ==========================================================================
+       5. CONTINUOUS SCROLLYTELLING SECTIONS (RÈGLE 1, 2, 4)
+       ========================================================================== */
+    .scrolly-container {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* SECTION 1 : HERO (AUCUNE BOÎTE, AUCUN EYEBROW ARTIFICIEL) */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 6% 7rem;
+      pointer-events: none;
+      position: relative;
+    }
+
+    .hero-editorial {
+      max-width: 920px;
+      pointer-events: auto;
+    }
+
+    /* RÈGLE 2 STRICTE : ZÉRO EYEBROW // LABEL ARTIFICIEL */
+    h1.hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4.2rem, 9.5vw, 8.8rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 2.2rem;
+    }
+
+    .hero-title .title-outline {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--text);
+    }
+
+    p.hero-manifesto {
+      font-family: var(--font-body);
+      font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 620px;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .meta-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .vector-compass {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--text);
+      border-radius: 50%;
+      position: relative;
+      animation: rotateCompass 12s linear infinite;
+    }
+
+    .vector-compass::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 5px;
+      width: 2px;
+      height: 5px;
+      background: var(--accent);
+    }
+
+    @keyframes rotateCompass {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ==========================================================================
+       SECTION 2 : PINNED 350vh SCROLLYTELLING (RÈGLE 4 : PINNING + 3 ANNOTATIONS)
+       ========================================================================== */
+    .pinned-story-section {
+      height: 350vh;
+      position: relative;
+    }
+
+    .pinned-viewport {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 6%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .annotation-cluster {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      pointer-events: auto;
+    }
+
+    .annotation-card {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%) translateX(0);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), visibility 0.6s;
+    }
+
+    .annotation-card.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .annotation-card.exit-up {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-70%) translateX(0);
+    }
+
+    .annotation-index {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.1em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .annotation-card h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1.5px;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 1.4rem;
+    }
+
+    .annotation-card p {
+      font-family: var(--font-body);
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 1.8rem;
+      max-width: 480px;
+    }
+
+    .annotation-specs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .spec-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .spec-value {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .spec-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ==========================================================================
+       SECTION 3 : PHYSICAL STACKING CARDS (RÈGLE 4 : POSITION STICKY)
+       ========================================================================== */
+    .stacking-section {
+      position: relative;
+      padding: 12rem 6% 14rem;
+      pointer-events: auto;
+      background: transparent;
+    }
+
+    .stacking-header {
+      max-width: 820px;
+      margin-bottom: 6rem;
+    }
+
+    .stacking-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6.5vw, 5.2rem);
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: -2px;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .stacking-header p {
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 580px;
+    }
+
+    .stack-cards-container {
+      position: relative;
+      max-width: 1220px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6vh;
+    }
+
+    .stacked-card {
+      position: sticky;
+      top: 14vh;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4.5rem;
+      box-shadow: 0 30px 80px rgba(10, 10, 12, 0.06), 0 2px 6px rgba(10, 10, 12, 0.02);
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 4.5rem;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+    .stacked-card:nth-child(1) {
+      top: 12vh;
+      z-index: 10;
+    }
+
+    .stacked-card:nth-child(2) {
+      top: 16vh;
+      z-index: 20;
+    }
+
+    .stacked-card:nth-child(3) {
+      top: 20vh;
+      z-index: 30;
+    }
+
+    .card-content-side {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-content-side h3 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.2vw, 3rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .card-content-side p {
+      font-family: var(--font-body);
+      font-size: 1.08rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .card-data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.8rem;
+    }
+
+    .card-data-item strong {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 0.2rem;
+    }
+
+    .card-data-item span {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .card-media-side {
+      position: relative;
+      border-radius: 2px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+    }
+
+    .card-media-side img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s var(--ease-out);
+    }
+
+    .stacked-card:hover .card-media-side img {
+      transform: scale(1.03);
+    }
+
+    /* ==========================================================================
+       SECTION 4 : CLOSING & FLYING EXIT (RÈGLE 4 : ENVOLÉE 3D)
+       ========================================================================== */
+    .closing-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 6% 8rem;
+      pointer-events: auto;
+      position: relative;
+      background: linear-gradient(to top, rgba(248, 249, 250, 0.9) 0%, transparent 100%);
+    }
+
+    .closing-content {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .closing-content h2 {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 7.5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      color: var(--text);
+    }
+
+    .closing-content p {
+      font-family: var(--font-body);
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 3.5rem;
+      line-height: 1.6;
+    }
+
+    .cta-button-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-swiss-primary {
+      background: var(--text);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1.25rem 3rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: all 0.3s var(--ease-out);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      border: 1px solid var(--text);
+    }
+
+    .btn-swiss-primary:hover {
+      background: #000000;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(10, 10, 12, 0.15);
+    }
+
+    .btn-swiss-secondary {
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1.25rem 3rem;
+      border-radius: 2px;
+      text-decoration: none;
+      border: 1px solid var(--border-dark);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .btn-swiss-secondary:hover {
+      background: var(--bg-subtle);
+      transform: translateY(-2px);
+    }
+
+    /* Footer Imprint */
+    footer {
+      width: 100%;
+      padding: 3rem 6%;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: #ffffff;
+    }
+
+    .footer-coords {
+      display: flex;
+      gap: 2rem;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE ADAPTATIONS
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .stacked-card {
+        grid-template-columns: 1fr;
+        padding: 3rem 2rem;
+        gap: 2.5rem;
+      }
+      .nav-links {
+        display: none;
+      }
+      .camera-hud {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        left: 1.5rem;
+        justify-content: center;
+      }
+      .hud-label {
+        display: none;
+      }
+      .telemetry-hud {
+        display: none;
+      }
+      .annotation-cluster {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Subtle Architectural Swiss Grid -->
+  <div class="swiss-grid-overlay">
+    <div class="swiss-grid-col"></div>
+    <div class="swiss-grid-col"></div>
+    <div class="swiss-grid-col"></div>
+    <div class="swiss-grid-col"></div>
+    <div class="swiss-grid-col"></div>
+  </div>
+
+  <!-- Interactive 3D Free-Orbit Surface Layer (z-index: 2) -->
+  <div class="interaction-overlay" id="drag-surface"></div>
+
+  <!-- Full-Bleed Continuous Three.js WebGL Canvas (z-index: 1) -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Editorial Swiss Header Navigation -->
+  <nav>
+    <a href="#" class="brand-mark">
+      <div class="swiss-cross"></div>
+      <span class="brand-title">STRIDE LAB</span>
+      <span class="brand-location">Z&uuml;rich &bull; Paris</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#prototype">Morphologie 3D</a></li>
+      <li><a href="#engineering">Ing&eacute;nierie Mat&eacute;riaux</a></li>
+      <li><a href="#specs">Chor&eacute;graphie</a></li>
+    </ul>
+    <a href="#acquisition" class="nav-action">
+      <span>Consulter l&rsquo;&Eacute;dition 01</span>
+      <span>&rarr;</span>
+    </a>
+  </nav>
+
+  <!-- Real-Time Camera Preset Focus HUD (Règle 3) -->
+  <div class="camera-hud">
+    <span class="hud-label">Mise au point</span>
+    <button class="camera-btn active" id="btn-profil">Profil</button>
+    <button class="camera-btn" id="btn-face">Face</button>
+    <button class="camera-btn" id="btn-semelle">Semelle / Zoom</button>
+    <button class="camera-btn" id="btn-talon">Talon / Arri&egrave;re</button>
+  </div>
+
+  <!-- Live Vector Coordinates Telemetry (Bottom-Left) -->
+  <div class="telemetry-hud">
+    <div class="telemetry-row">
+      <div class="telemetry-dot"></div>
+      <span>STRIDE-01 / VECTEUR SPATIAL (X, Y, Z)</span>
+    </div>
+    <div class="telemetry-row">
+      <span id="coords-display">ROT: [0.18&radic;, -0.62&radic;, 0.08&radic;] &bull; DAMP: 0.92</span>
+    </div>
+  </div>
+
+  <!-- Continuous Scrollytelling Flow -->
+  <div class="scrolly-container">
+
+    <!-- ======================================================================
+         SECTION 1 : HERO MONUMENTAL (RÈGLE 1 & 2 : ZÉRO BOÎTE, ZÉRO EYEBROW)
+         ====================================================================== -->
+    <section class="hero-section" id="prototype">
+      <div class="hero-editorial">
+        <h1 class="hero-title">
+          Morphologie
+          <span class="title-outline">Du Mouvement</span>
+        </h1>
+        <p class="hero-manifesto">
+          Une exp&eacute;rience tridimensionnelle con&ccedil;ue &agrave; Z&uuml;rich. Cliquez et faites pivoter l&rsquo;objet dans l&rsquo;espace pour &eacute;tudier chaque courbe technique ou scrollez pour d&eacute;clencher la chor&eacute;graphie biom&eacute;canique.
+        </p>
+        <div class="hero-meta-row">
+          <div class="meta-indicator">
+            <div class="vector-compass"></div>
+            <span>Espace Vectoriel Libre 360&deg;</span>
+          </div>
+          <div>Inertie Physique Amortie (0.92)</div>
+          <div>&Eacute;tude Structurelle 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 2 : PINNED 350vh SCROLLYTELLING (RÈGLE 4)
+         ====================================================================== -->
+    <section class="pinned-story-section" id="engineering">
+      <div class="pinned-viewport">
+        <div class="annotation-cluster">
+          
+          <!-- Annotation 1 -->
+          <div class="annotation-card active" id="annot-1">
+            <div class="annotation-index">01 &mdash; ARCHITECTURE TORSIONNELLE</div>
+            <h2>Ch&acirc;ssis Carbone 3K</h2>
+            <p>
+              Plaque de propulsion monolithique ins&eacute;r&eacute;e sous l&rsquo;arche longitudinale. Elle canalise les contraintes vectorielles pour restituer instantan&eacute;ment l&rsquo;&eacute;nergie cin&eacute;tique &agrave; chaque impulsion.
+            </p>
+            <div class="annotation-specs">
+              <div class="spec-block">
+                <span class="spec-value">24.8 g</span>
+                <span class="spec-title">Masse Structurelle</span>
+              </div>
+              <div class="spec-block">
+                <span class="spec-value">3.2 GPa</span>
+                <span class="spec-title">Module d&rsquo;&Eacute;lasticit&eacute;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Annotation 2 -->
+          <div class="annotation-card" id="annot-2">
+            <div class="annotation-index">02 &mdash; DYNAMIQUE FLUIDIQUE</div>
+            <h2>Cellules Cryo-Azote</h2>
+            <p>
+              Chambres pneumatiques en polym&egrave;re translucide expans&eacute;es sous azote pur sous haute pression. Z&eacute;ro d&eacute;formation r&eacute;siduelle et absorption des ondes de choc jusqu&rsquo;&agrave; 88%.
+            </p>
+            <div class="annotation-specs">
+              <div class="spec-block">
+                <span class="spec-value">88.4 %</span>
+                <span class="spec-title">Restitution d&rsquo;&Eacute;nergie</span>
+              </div>
+              <div class="spec-block">
+                <span class="spec-value">&minus;18 &deg;C</span>
+                <span class="spec-title">Stabilisation Thermique</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Annotation 3 -->
+          <div class="annotation-card" id="annot-3">
+            <div class="annotation-index">03 &mdash; ENVELOPPE MONOBLOC</div>
+            <h2>Empeigne A&eacute;ro-Knit</h2>
+            <p>
+              Tissage continu sans raccord ni couture abrasive. Les micro-perforations laser calibr&eacute;es &agrave; 0.4 mm optimisent l&rsquo;&eacute;vacuation du flux thermique tout en maintenant un maintien chirurgical du tarse.
+            </p>
+            <div class="annotation-specs">
+              <div class="spec-block">
+                <span class="spec-value">0.4 mm</span>
+                <span class="spec-title">Calibre Laser</span>
+              </div>
+              <div class="spec-block">
+                <span class="spec-value">100 %</span>
+                <span class="spec-title">Polym&egrave;re Recyclable</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 3 : PHYSICAL STACKING CARDS (RÈGLE 4)
+         ====================================================================== -->
+    <section class="stacking-section" id="specs">
+      <div class="stacking-header">
+        <h2>Mati&egrave;res &amp; Pr&eacute;cision Suisse</h2>
+        <p>
+          Trois &eacute;tudes mat&eacute;rielles document&eacute;es en laboratoire. Chaque carte technique s&rsquo;empile physiquement au scroll pour r&eacute;v&eacute;ler l&rsquo;int&eacute;grit&eacute; du projet STRIDE-01.
+        </p>
+      </div>
+
+      <div class="stack-cards-container">
+        
+        <!-- Stacking Card 1 -->
+        <article class="stacked-card">
+          <div class="card-content-side">
+            <span class="card-num">01 / DISPOSITIF DE CONTACT</span>
+            <h3>Semelle Micro-Grav&eacute;e &amp; Carbone</h3>
+            <p>
+              Empreinte hexagonale &agrave; profil biom&eacute;trique. D&eacute;velopp&eacute;e selon les protocoles de soufflerie de Zurich pour &eacute;vacuer les fluides de surface et garantir une antid&eacute;rive absolue sur asphalte humide.
+            </p>
+            <div class="card-data-grid">
+              <div class="card-data-item">
+                <strong>HEX-700&trade;</strong>
+                <span>G&eacute;om&eacute;trie de Traction</span>
+              </div>
+              <div class="card-data-item">
+                <strong>0.82 &mu;s</strong>
+                <span>Temps de R&eacute;ponse</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-media-side">
+            <img src="assets/sole-macro.jpg" alt="Macro studio de la semelle suisse STRIDE LAB avec plaque de carbone" loading="lazy">
+          </div>
+        </article>
+
+        <!-- Stacking Card 2 -->
+        <article class="stacked-card">
+          <div class="card-content-side">
+            <span class="card-num">02 / SILHOUETTE A&Eacute;RODYNAMIQUE</span>
+            <h3>Profil Architectural Monolithe</h3>
+            <p>
+              Ligne tendue &agrave; coefficient de tra&icirc;n&eacute;e r&eacute;duit de 14%. La transition entre la tige blanche immacul&eacute;e et la cellule azote arri&egrave;re compose une silhouette sans rupture visuelle.
+            </p>
+            <div class="card-data-grid">
+              <div class="card-data-item">
+                <strong>0.19 Cx</strong>
+                <span>Coefficient Tra&icirc;n&eacute;e</span>
+              </div>
+              <div class="card-data-item">
+                <strong>Alba #ffffff</strong>
+                <span>Nuance Min&eacute;rale</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-media-side">
+            <img src="assets/hero-white.jpg" alt="Profil studio de la sneaker blanche STRIDE LAB" loading="lazy">
+          </div>
+        </article>
+
+        <!-- Stacking Card 3 -->
+        <article class="stacked-card">
+          <div class="card-content-side">
+            <span class="card-num">03 / ING&Eacute;NIERIE TEXTILE</span>
+            <h3>Micro-Perforations Laser &amp; Filaments</h3>
+            <p>
+              Densification cibl&eacute;e des fibres aux points d&rsquo;ancrage m&eacute;canique. Chaque section de l&rsquo;empeigne pr&eacute;sente un coefficient de souplesse distinct, &eacute;liminant tout besoin d&rsquo;armature externe superflue.
+            </p>
+            <div class="card-data-grid">
+              <div class="card-data-item">
+                <strong>3 400</strong>
+                <span>Micro-Canaux / dm&sup2;</span>
+              </div>
+              <div class="card-data-item">
+                <strong>Oeko-Tex&reg;</strong>
+                <span>Certification Puret&eacute;</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-media-side">
+            <img src="assets/knit-detail.jpg" alt="Macro d&eacute;tail du tissage technique blanc et coutures carbone" loading="lazy">
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 4 : ENVOLÉE FINALE & ACQUISITION (RÈGLE 4)
+         ====================================================================== -->
+    <section class="closing-section" id="acquisition">
+      <div class="closing-content">
+        <h2>STRIDE&ndash;01</h2>
+        <p>
+          L&rsquo;&eacute;dition de lancement est num&eacute;rot&eacute;e &agrave; 300 unit&eacute;s pour l&rsquo;ann&eacute;e 2026. Assembl&eacute;e sous contr&ocirc;le m&eacute;trologique en Suisse avec certificat cryptographique unifi&eacute;.
+        </p>
+        <div class="cta-button-group">
+          <a href="#" class="btn-swiss-primary">
+            <span>R&eacute;server l&rsquo;&Eacute;dition 01 &mdash; 380 CHF</span>
+            <span>&rarr;</span>
+          </a>
+          <a href="#" class="btn-swiss-secondary">
+            <span>Dossier Technique PDF</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Editorial Swiss Footer -->
+  <footer>
+    <div>&copy;&nbsp;2026 STRIDE LAB AG &bull; Z&Uuml;RICH &mdash; PARIS</div>
+    <div class="footer-coords">
+      <span>47&deg;&nbsp;22&prime;&nbsp;35&Prime;&nbsp;N, 8&deg;&nbsp;32&prime;&nbsp;36&Prime;&nbsp;E</span>
+      <span>ALL RIGHTS RESERVED</span>
+    </div>
+  </footer>
+
+  <!-- Three.js + GSAP + ScrollTrigger CDN Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ==========================================================================
+       1. THREE.JS VECTOR SPACE INITIALIZATION (SWISS STUDIO LIGHTING)
+       ========================================================================== */
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    
+    // Pure Pristine Swiss White Canvas #ffffff
+    scene.background = new THREE.Color(0xffffff);
+    scene.fog = new THREE.Fog(0xffffff, 10, 24);
+
+    const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 8.8);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: false,
+      powerPreference: "high-performance"
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    /* ==========================================================================
+       2. REFINED SWISS LIGHTING RIG (CLEAN STUDIO WITH SHARP SPECULARITY)
+       ========================================================================== */
+    // Soft omnidirectional fill
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+
+    // Primary High Key Light (Simulating Swiss ceiling softbox)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    keyLight.position.set(5, 9, 6);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 2048;
+    keyLight.shadow.mapSize.height = 2048;
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 25;
+    keyLight.shadow.camera.left = -5;
+    keyLight.shadow.camera.right = 5;
+    keyLight.shadow.camera.top = 5;
+    keyLight.shadow.camera.bottom = -5;
+    keyLight.shadow.bias = -0.0005;
+    scene.add(keyLight);
+
+    // Cool Sculpting Rim Light (Chisels silhouette against pure white)
+    const rimLight = new THREE.DirectionalLight(0xd9e2ec, 1.2);
+    rimLight.position.set(-6, -2, -5);
+    scene.add(rimLight);
+
+    // Upward bouncing light for undercarriage illumination
+    const bounceLight = new THREE.DirectionalLight(0xf1f5f9, 0.8);
+    bounceLight.position.set(0, -6, 4);
+    scene.add(bounceLight);
+
+    // Dynamic Cursor Follow Spotlight (Specular Tracking)
+    const cursorLight = new THREE.PointLight(0xffffff, 1.2, 12);
+    cursorLight.position.set(0, 0, 4);
+    scene.add(cursorLight);
+
+    /* ==========================================================================
+       3. HIGH-FIDELITY 3D SNEAKER PROTOTYPE HIERARCHY (NO SIMPLE PRIMITIVES)
+       ========================================================================== */
+    const shoeMasterGroup = new THREE.Group();
+    scene.add(shoeMasterGroup);
+
+    // Material Library
+    // A. Architectural Matte White Polymer
+    const whitePolymerMat = new THREE.MeshStandardMaterial({
+      color: 0xfcfcfd,
+      roughness: 0.28,
+      metalness: 0.08
+    });
+
+    // B. High-Gloss Woven Carbon Fiber Composite
+    const carbonFiberMat = new THREE.MeshStandardMaterial({
+      color: 0x121316,
+      roughness: 0.18,
+      metalness: 0.85
+    });
+
+    // C. Cryogenic Nitrogen Translucent Cushion Pods (Refraction Physical)
+    const cryoPodMat = new THREE.MeshPhysicalMaterial({
+      color: 0xe0f2fe,
+      transmission: 0.88,
+      opacity: 0.95,
+      transparent: true,
+      roughness: 0.08,
+      ior: 1.48,
+      thickness: 1.2,
+      specularIntensity: 1.0,
+      specularColor: 0xffffff
+    });
+
+    // D. Soft Collar Foam / Graphite Lining
+    const innerLiningMat = new THREE.MeshStandardMaterial({
+      color: 0x22242a,
+      roughness: 0.65,
+      metalness: 0.05
+    });
+
+    // E. Swiss Red Precision Accent
+    const swissRedMat = new THREE.MeshStandardMaterial({
+      color: 0xeb0029,
+      roughness: 0.2,
+      metalness: 0.3
+    });
+
+    // --- Complex Geometric Construction ---
+
+    // 1. Sculpted Outsole Geometry (Multi-sectioned ergonomic sole)
+    const soleGroup = new THREE.Group();
+
+    // Main base sole rocker
+    const soleBaseGeom = new THREE.BoxGeometry(4.4, 0.35, 1.6, 24, 2, 8);
+    // Smooth the base vertices slightly for ergonomic curve
+    const posAttr = soleBaseGeom.attributes.position;
+    for (let i = 0; i < posAttr.count; i++) {
+      const x = posAttr.getX(i);
+      const y = posAttr.getY(i);
+      const z = posAttr.getZ(i);
+      // Upward curve at the toe rocker
+      if (x > 1.0) {
+        posAttr.setY(i, y + Math.pow((x - 1.0) / 1.2, 2) * 0.45);
+      }
+      // Arch taper in the middle
+      if (Math.abs(x) < 0.8) {
+        posAttr.setZ(i, z * 0.85);
+      }
+    }
+    soleBaseGeom.computeVertexNormals();
+
+    const soleBaseMesh = new THREE.Mesh(soleBaseGeom, whitePolymerMat);
+    soleBaseMesh.position.y = -0.92;
+    soleBaseMesh.castShadow = true;
+    soleBaseMesh.receiveShadow = true;
+    soleGroup.add(soleBaseMesh);
+
+    // Hexagonal Traction Lugs underneath sole
+    for (let x = -1.6; x <= 1.8; x += 0.55) {
+      for (let z = -0.5; z <= 0.5; z += 0.5) {
+        // Skip midfoot arch to expose carbon plate
+        if (x > -0.6 && x < 0.5) continue;
+        const lugGeom = new THREE.CylinderGeometry(0.14, 0.14, 0.08, 6);
+        const lugMesh = new THREE.Mesh(lugGeom, cryoPodMat);
+        lugMesh.position.set(x, -1.12, z);
+        soleGroup.add(lugMesh);
+      }
+    }
+
+    // 2. Torsional Carbon Fiber Propulsion Plate (Midfoot bridge & heel cup)
+    const carbonPlateGroup = new THREE.Group();
+    const carbonShankGeom = new THREE.BoxGeometry(2.2, 0.08, 1.25);
+    const carbonShank = new THREE.Mesh(carbonShankGeom, carbonFiberMat);
+    carbonShank.position.set(-0.1, -0.76, 0);
+    carbonPlateGroup.add(carbonShank);
+
+    // Heel reinforcement counter in carbon
+    const heelCounterGeom = new THREE.CylinderGeometry(0.85, 0.9, 0.7, 32, 1, true, -Math.PI / 2, Math.PI);
+    heelCounterGeom.rotateY(Math.PI / 2);
+    const heelCounter = new THREE.Mesh(heelCounterGeom, carbonFiberMat);
+    heelCounter.position.set(-1.45, -0.3, 0);
+    carbonPlateGroup.add(heelCounter);
+
+    soleGroup.add(carbonPlateGroup);
+
+    // 3. Cryogenic Nitrogen Dampening Chambers (Translucent Pods)
+    const podGroup = new THREE.Group();
+    // Rear dual chamber
+    for (let z of [-0.42, 0.42]) {
+      const rearPodGeom = new THREE.CylinderGeometry(0.38, 0.38, 0.55, 32);
+      rearPodGeom.rotateZ(Math.PI / 2);
+      const rearPod = new THREE.Mesh(rearPodGeom, cryoPodMat);
+      rearPod.position.set(-1.15, -0.62, z);
+      podGroup.add(rearPod);
+
+      // Internal damping coil
+      const coilGeom = new THREE.TorusGeometry(0.18, 0.04, 12, 24);
+      coilGeom.rotateY(Math.PI / 2);
+      const coil = new THREE.Mesh(coilGeom, carbonFiberMat);
+      coil.position.set(-1.15, -0.62, z);
+      podGroup.add(coil);
+    }
+
+    // Forefoot segmented pods
+    for (let x = 0.6; x <= 1.4; x += 0.42) {
+      const forePodGeom = new THREE.CylinderGeometry(0.24, 0.24, 0.35, 24);
+      forePodGeom.rotateZ(Math.PI / 2);
+      const forePod = new THREE.Mesh(forePodGeom, cryoPodMat);
+      forePod.position.set(x, -0.68, 0);
+      podGroup.add(forePod);
+    }
+    soleGroup.add(podGroup);
+    shoeMasterGroup.add(soleGroup);
+
+    // 4. Parametric Sculpted Upper (Mono-knit aerodynamic sock)
+    const upperGroup = new THREE.Group();
+
+    // Main anatomical foot envelope
+    const upperGeom = new THREE.ConeGeometry(1.7, 3.1, 40, 8);
+    upperGeom.rotateZ(-Math.PI / 2.32);
+    const upperPos = upperGeom.attributes.position;
+    for (let i = 0; i < upperPos.count; i++) {
+      const x = upperPos.getX(i);
+      const y = upperPos.getY(i);
+      const z = upperPos.getZ(i);
+      // Flatten instep top & broaden forefoot
+      if (x > 0) {
+        upperPos.setZ(i, z * 1.15);
+      }
+    }
+    upperGeom.computeVertexNormals();
+
+    const upperMesh = new THREE.Mesh(upperGeom, whitePolymerMat);
+    upperMesh.scale.set(1.2, 0.72, 0.94);
+    upperMesh.position.set(0.18, 0.25, 0);
+    upperMesh.castShadow = true;
+    upperGroup.add(upperMesh);
+
+    // Contoured Ankle Collar & Tongue Opening
+    const collarGeom = new THREE.TorusGeometry(0.68, 0.16, 20, 36);
+    collarGeom.rotateX(Math.PI / 2);
+    const collarMesh = new THREE.Mesh(collarGeom, innerLiningMat);
+    collarMesh.position.set(-0.85, 0.78, 0);
+    upperGroup.add(collarMesh);
+
+    // Aerodynamic instep tongue plate
+    const tongueGeom = new THREE.BoxGeometry(1.6, 0.06, 0.6);
+    tongueGeom.rotateZ(-Math.PI / 5);
+    const tongueMesh = new THREE.Mesh(tongueGeom, whitePolymerMat);
+    tongueMesh.position.set(-0.35, 0.65, 0);
+    upperGroup.add(tongueMesh);
+
+    // Swiss Red Metric Accent Tag (Precision mark)
+    const swissTagGeom = new THREE.BoxGeometry(0.08, 0.22, 0.18);
+    const swissTag = new THREE.Mesh(swissTagGeom, swissRedMat);
+    swissTag.position.set(-1.42, 0.45, 0.48);
+    upperGroup.add(swissTag);
+
+    // Speed Lines / External Support Ribs (Clean architectural ridges)
+    for (let i = -1; i <= 1; i++) {
+      const ribGeom = new THREE.TorusGeometry(0.85, 0.025, 8, 32, Math.PI / 1.8);
+      ribGeom.rotateZ(Math.PI / 2.8);
+      const ribMesh = new THREE.Mesh(ribGeom, carbonFiberMat);
+      ribMesh.position.set(0.1 + i * 0.25, 0.1, 0.45);
+      upperGroup.add(ribMesh);
+
+      const ribMeshOther = new THREE.Mesh(ribGeom, carbonFiberMat);
+      ribMeshOther.rotation.y = Math.PI;
+      ribMeshOther.position.set(0.1 + i * 0.25, 0.1, -0.45);
+      upperGroup.add(ribMeshOther);
+    }
+
+    shoeMasterGroup.add(upperGroup);
+
+    // 5. Subtle Architectural CAD Vector Coordinate Overlay (True X, Y, Z space)
+    const cadFrameGroup = new THREE.Group();
+    const frameGeom = new THREE.BoxGeometry(4.7, 2.3, 1.8);
+    const frameMat = new THREE.MeshBasicMaterial({
+      color: 0x0a0a0c,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.04
+    });
+    const cadBox = new THREE.Mesh(frameGeom, frameMat);
+    cadBox.position.set(0, 0, 0);
+    cadFrameGroup.add(cadBox);
+
+    // Vector Origin Marker (Swiss Cross in 3D)
+    const originCrossGroup = new THREE.Group();
+    const axisX = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.02, 0.02), swissRedMat);
+    const axisY = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.4, 0.02), whitePolymerMat);
+    originCrossGroup.add(axisX);
+    originCrossGroup.add(axisY);
+    originCrossGroup.position.set(-2.2, -0.9, 0.85);
+    cadFrameGroup.add(originCrossGroup);
+
+    shoeMasterGroup.add(cadFrameGroup);
+
+    // 6. Realistic Ground Studio Contact Shadow
+    const shadowGeo = new THREE.PlaneGeometry(7.5, 3.8);
+    const shadowCanvas = document.createElement('canvas');
+    shadowCanvas.width = 512;
+    shadowCanvas.height = 256;
+    const sCtx = shadowCanvas.getContext('2d');
+    const sGrad = sCtx.createRadialGradient(256, 128, 10, 256, 128, 160);
+    sGrad.addColorStop(0, 'rgba(10, 10, 15, 0.18)');
+    sGrad.addColorStop(0.4, 'rgba(10, 10, 15, 0.08)');
+    sGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    sCtx.fillStyle = sGrad;
+    sCtx.fillRect(0, 0, 512, 256);
+
+    const shadowTex = new THREE.CanvasTexture(shadowCanvas);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      map: shadowTex,
+      transparent: true,
+      opacity: 0.85
+    });
+    const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat);
+    shadowPlane.rotation.x = -Math.PI / 2;
+    shadowPlane.position.set(0, -1.25, 0);
+    scene.add(shadowPlane);
+
+    // Initial 3D Spatial Position & Elegant Presentation Angle
+    shoeMasterGroup.position.set(1.4, 0.1, 0);
+    shoeMasterGroup.rotation.set(0.18, -0.62, 0.08);
+
+    /* ==========================================================================
+       4. INTERACTIVE 360° ORBIT WITH PHYSICAL DAMPENING (0.92 STRICT RULE)
+       ========================================================================== */
+    let isDragging = false;
+    let prevPointerX = 0;
+    let prevPointerY = 0;
+    let dragVelocityX = 0;
+    let dragVelocityY = 0;
+    let targetRotationX = 0.18;
+    let targetRotationY = -0.62;
+    let isProgrammaticTweening = false;
+
+    const dragSurface = document.getElementById('drag-surface');
+    const coordsDisplay = document.getElementById('coords-display');
+
+    dragSurface.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+      isProgrammaticTweening = false;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      // Dynamic Cursor Light Positioning in World Space
+      const normX = (e.clientX / window.innerWidth) * 2 - 1;
+      const normY = -(e.clientY / window.innerHeight) * 2 + 1;
+      cursorLight.position.x = normX * 6;
+      cursorLight.position.y = normY * 4;
+
+      if (!isDragging) return;
+
+      const deltaX = e.clientX - prevPointerX;
+      const deltaY = e.clientY - prevPointerY;
+
+      // Sensitivity tuning
+      dragVelocityX = deltaX * 0.007;
+      dragVelocityY = deltaY * 0.007;
+
+      shoeMasterGroup.rotation.y += dragVelocityX;
+      shoeMasterGroup.rotation.x += dragVelocityY;
+
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDragging = false;
+    });
+
+    window.addEventListener('pointercancel', () => {
+      isDragging = false;
+    });
+
+    /* ==========================================================================
+       5. CAMERA FOCUS HUD PRESETS (PROFIL, FACE, SEMELLE, TALON)
+       ========================================================================== */
+    const cameraPresets = {
+      profil:  { rotX: 0.18, rotY: -0.62, rotZ: 0.08, camZ: 8.8, posX: 1.4 },
+      face:    { rotX: 0.05, rotY: Math.PI / 2 - 0.2, rotZ: 0, camZ: 7.8, posX: 0.8 },
+      semelle: { rotX: -Math.PI / 2 + 0.35, rotY: 0.1, rotZ: Math.PI / 2.2, camZ: 7.2, posX: 1.0 },
+      talon:   { rotX: 0.12, rotY: Math.PI - 0.35, rotZ: 0.05, camZ: 8.2, posX: 1.2 }
+    };
+
+    function applyCameraPreset(presetName, targetBtn) {
+      document.querySelectorAll('.camera-btn').forEach(btn => btn.classList.remove('active'));
+      if (targetBtn) targetBtn.classList.add('active');
+
+      const p = cameraPresets[presetName];
+      if (!p) return;
+
+      isProgrammaticTweening = true;
+
+      gsap.to(shoeMasterGroup.rotation, {
+        x: p.rotX,
+        y: p.rotY,
+        z: p.rotZ,
+        duration: 1.4,
+        ease: "power2.out",
+        onComplete: () => { isProgrammaticTweening = false; }
+      });
+
+      gsap.to(shoeMasterGroup.position, {
+        x: p.posX,
+        duration: 1.4,
+        ease: "power2.out"
+      });
+
+      gsap.to(camera.position, {
+        z: p.camZ,
+        duration: 1.4,
+        ease: "power2.out"
+      });
+    }
+
+    document.getElementById('btn-profil').addEventListener('click', (e) => applyCameraPreset('profil', e.currentTarget));
+    document.getElementById('btn-face').addEventListener('click', (e) => applyCameraPreset('face', e.currentTarget));
+    document.getElementById('btn-semelle').addEventListener('click', (e) => applyCameraPreset('semelle', e.currentTarget));
+    document.getElementById('btn-talon').addEventListener('click', (e) => applyCameraPreset('talon', e.currentTarget));
+
+    /* ==========================================================================
+       6. BIDIRECTIONAL SCROLLTRIGGER CHOREOGRAPHY (RÈGLE 4)
+       ========================================================================== */
+    
+    // Stage 2 : Pinning 350vh with 3 Sequential Technical Annotations
+    const pinnedTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".pinned-story-section",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.0,
+        onUpdate: (self) => {
+          const prog = self.progress;
+          const a1 = document.getElementById('annot-1');
+          const a2 = document.getElementById('annot-2');
+          const a3 = document.getElementById('annot-3');
+
+          // Annotation step switcher with clean classes
+          if (prog < 0.33) {
+            a1.className = 'annotation-card active';
+            a2.className = 'annotation-card';
+            a3.className = 'annotation-card';
+          } else if (prog < 0.66) {
+            a1.className = 'annotation-card exit-up';
+            a2.className = 'annotation-card active';
+            a3.className = 'annotation-card';
+          } else {
+            a1.className = 'annotation-card exit-up';
+            a2.className = 'annotation-card exit-up';
+            a3.className = 'annotation-card active';
+          }
+        }
+      }
+    });
+
+    // Choreographed 3D Rotations & Vector Translations synchronized with scroll
+    pinnedTimeline
+      // Step 1: Reveal Carbon Chassis (Tilt to bottom/side)
+      .to(shoeMasterGroup.position, { x: 1.6, y: 0.2, z: 0.6, ease: "none" }, 0)
+      .to(shoeMasterGroup.rotation, { x: -0.45, y: -Math.PI * 0.9, z: 0.25, ease: "none" }, 0)
+      
+      // Step 2: Highlight Cryo Nitrogen Pods (Rear & Undercarriage elevation)
+      .to(shoeMasterGroup.position, { x: 1.3, y: -0.1, z: 1.4, ease: "none" }, 0.35)
+      .to(shoeMasterGroup.rotation, { x: -0.85, y: -Math.PI * 1.7, z: 0.45, ease: "none" }, 0.35)
+      
+      // Step 3: Reveal Seamless Aeroknit Upper (Top-down lateral perspective)
+      .to(shoeMasterGroup.position, { x: 1.2, y: 0.15, z: 1.0, ease: "none" }, 0.70)
+      .to(shoeMasterGroup.rotation, { x: 0.3, y: -Math.PI * 2.5, z: -0.15, ease: "none" }, 0.70);
+
+    // Stage 3 : Stacking Cards Transition (Shift object slightly back to let cards lead)
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: ".stacking-section",
+        start: "top center",
+        end: "bottom bottom",
+        scrub: 1.2
+      }
+    })
+    .to(shoeMasterGroup.position, { x: 2.2, y: 0.2, z: -0.8, ease: "none" })
+    .to(shoeMasterGroup.rotation, { y: -Math.PI * 3.4, x: 0.1, ease: "none" });
+
+    // Stage 4 : Sortie Aérienne / Flying Exit (Règle 4)
+    // The 3D model gracefully soars upward into the sky as final CTA unfolds
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: ".closing-section",
+        start: "top 75%",
+        end: "bottom bottom",
+        scrub: 1.4
+      }
+    })
+    .to(shoeMasterGroup.position, {
+      y: 9.5,
+      z: -4.0,
+      x: 0,
+      ease: "power2.in"
+    })
+    .to(shoeMasterGroup.rotation, {
+      x: Math.PI * 0.8,
+      y: -Math.PI * 4.6,
+      z: Math.PI * 0.3,
+      ease: "power2.in"
+    })
+    .to(shadowPlane.material, {
+      opacity: 0,
+      ease: "power2.in"
+    }, 0);
+
+    /* ==========================================================================
+       7. RENDER LOOP WITH PHYSICAL DAMPENING (DAMPENING FACTOR = 0.92)
+       ========================================================================== */
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
+
+      // Inertial damping strictly at 0.92 as requested in Golden Rule 3
+      if (!isDragging && !isProgrammaticTweening) {
+        dragVelocityX *= 0.92;
+        dragVelocityY *= 0.92;
+        shoeMasterGroup.rotation.y += dragVelocityX;
+        shoeMasterGroup.rotation.x += dragVelocityY;
+      }
+
+      // Micro ambient levitation floating effect
+      if (!isDragging) {
+        const hoverOffset = Math.sin(elapsedTime * 1.6) * 0.0012;
+        shoeMasterGroup.position.y += hoverOffset;
+      }
+
+      // Live Telemetry Readout
+      if (coordsDisplay) {
+        const rx = shoeMasterGroup.rotation.x.toFixed(2);
+        const ry = shoeMasterGroup.rotation.y.toFixed(2);
+        const rz = shoeMasterGroup.rotation.z.toFixed(2);
+        coordsDisplay.innerText = `ROT: [${rx}, ${ry}, ${rz}] • DAMP: 0.92`;
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    /* ==========================================================================
+       8. RESPONSIVE VIEWPORT RESIZE HANDLER
+       ========================================================================== */
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Mobile adaptation for shoe centering
+      if (window.innerWidth < 960) {
+        shoeMasterGroup.position.x = 0;
+      } else {
+        shoeMasterGroup.position.x = 1.4;
+      }
+
+      ScrollTrigger.refresh();
+    });
+
+    // Initial check for viewport width
+    if (window.innerWidth < 960) {
+      shoeMasterGroup.position.x = 0;
+    }
+  </script>
+</body>
+</html>

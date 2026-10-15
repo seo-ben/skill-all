@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOIR // Haute Couture 3D Lookbook Automne-Hiver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #070707;
+      --card-bg: rgba(18, 18, 18, 0.7);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --accent: #e2e8f0;
+      --gold: #d4af37;
+      --text: #ffffff;
+      --text-muted: #888888;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: default;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* WebGL Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 2.5rem 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .brand-fashion {
+      font-family: 'Italiana', serif;
+      font-size: 2.2rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+    }
+
+    .nav-items {
+      display: flex;
+      gap: 3rem;
+      list-style: none;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .nav-items a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-items a:hover {
+      color: #fff;
+    }
+
+    .btn-capsule {
+      padding: 0.75rem 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 0;
+      color: #fff;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-decoration: none;
+      background: transparent;
+      transition: all 0.3s;
+    }
+
+    .btn-capsule:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* Scrollytelling Panels */
+    .scroll-container {
+      position: relative;
+      z-index: 10;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 10%;
+      pointer-events: none;
+    }
+
+    .editorial-panel {
+      max-width: 540px;
+      pointer-events: auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      padding: 3.5rem;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9);
+    }
+
+    .season-tag {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      display: block;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-family: 'Italiana', serif;
+      font-size: 4.2rem;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+
+    h2 {
+      font-family: 'Italiana', serif;
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+      font-weight: 400;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .align-right {
+      justify-content: flex-end;
+    }
+
+    .look-meta {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .look-meta span strong {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand-fashion">NOIR ATELIER</div>
+    <ul class="nav-items">
+      <li><a href="#collection">Capsule</a></li>
+      <li><a href="#drape">Matière 3D</a></li>
+      <li><a href="#silhouette">Silhouette</a></li>
+    </ul>
+    <a href="#boutique" class="btn-capsule">Boutique Privée</a>
+  </nav>
+
+  <!-- Content -->
+  <div class="scroll-container">
+    
+    <!-- Section 1 : Introduction -->
+    <section id="collection">
+      <div class="editorial-panel">
+        <span class="season-tag">// COLLECTION AUTOMNE-HIVER 2026</span>
+        <h1>L'Éloge du Mouvement et du Drapé.</h1>
+        <p>Une étude architecturale du tissu en apesanteur. Soie crêpe de Chine, laine mérinos extrafine et finitions coutures invisibles réalisées dans nos ateliers parisiens.</p>
+        <div class="look-meta">
+          <span>Look : <strong>01 / 24</strong></span>
+          <span>Pièce : <strong>Manteau Sculpté</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2 : Matière & Drapé 3D -->
+    <section id="drape" class="align-right">
+      <div class="editorial-panel">
+        <span class="season-tag">// ÉTUDE DE MATIÈRE</span>
+        <h2>LE DRAPÉ EN SUSPENSION</h2>
+        <p>Au défilement de votre écran, le tissu réagit à un souffle virtuel. Scrollez vers le bas pour révéler la structure interne, scrollez vers le haut pour replier le drapé.</p>
+        <div class="look-meta">
+          <span>Tissage : <strong>Microfibre Satinée</strong></span>
+          <span>Grammage : <strong>480 g/m²</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 : Silhouette & Coupe -->
+    <section id="silhouette">
+      <div class="editorial-panel">
+        <span class="season-tag">// ÉPURE GÉOMÉTRIQUE</span>
+        <h2>L'OMBRE ET LA LIGNE</h2>
+        <p>Contraste noir absolu, reflets irisés métalliques et tombé parfait. Une silhouette affûtée qui transcende les saisons et les tendances éphémères.</p>
+        <div class="look-meta">
+          <span>Coupe : <strong>Oversize Structuré</strong></span>
+          <span>Coloris : <strong>Noir Profond & Or</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 : Boutique / Commande -->
+    <section id="boutique" class="align-right">
+      <div class="editorial-panel">
+        <span class="season-tag">// COMMANDE SUR-MESURE</span>
+        <h2>EXPÉRIENCE PRIVÉE</h2>
+        <p>Réservation sur rendez-vous au showroom parisien ou confection à distance avec notre maître tailleur.</p>
+        <a href="#" class="btn-capsule" style="display: inline-block;">Réserver un Fitting</a>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // --- THREE.JS SCENE SETUP ---
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x070707, 0.06);
+
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 8);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // --- LIGHTS ---
+    const amb = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(amb);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    keyLight.position.set(5, 7, 5);
+    scene.add(keyLight);
+
+    const rimGold = new THREE.DirectionalLight(0xd4af37, 2.5);
+    rimGold.position.set(-6, -4, -4);
+    scene.add(rimGold);
+
+    const cursorLight = new THREE.PointLight(0xffffff, 1.5, 8);
+    scene.add(cursorLight);
+
+    // --- DRAPED SILK FABRIC (PARAMETRIC MESH) ---
+    const fashionGroup = new THREE.Group();
+    scene.add(fashionGroup);
+
+    // Dynamic Cloth Plane
+    const clothGeom = new THREE.PlaneGeometry(4.2, 5.5, 48, 48);
+    const pos = clothGeom.attributes.position;
+    const initialPos = new Float32Array(pos.array); // Keep reference for waves
+
+    const clothMat = new THREE.MeshPhysicalMaterial({
+      color: 0x141416,
+      roughness: 0.35,
+      metalness: 0.8,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.2,
+      side: THREE.DoubleSide
+    });
+
+    const clothMesh = new THREE.Mesh(clothGeom, clothMat);
+    clothMesh.rotation.y = 0.4;
+    fashionGroup.add(clothMesh);
+
+    // Gold Accent Ring
+    const goldRingGeom = new THREE.TorusGeometry(1.4, 0.03, 16, 64);
+    const goldRingMat = new THREE.MeshStandardMaterial({
+      color: 0xd4af37,
+      metalness: 0.95,
+      roughness: 0.1
+    });
+    const goldRing = new THREE.Mesh(goldRingGeom, goldRingMat);
+    goldRing.position.set(0, 0, 0.2);
+    fashionGroup.add(goldRing);
+
+    fashionGroup.position.set(1.5, 0, 0);
+
+    // --- BIDIRECTIONAL SCROLLTIMELINE ---
+    const fashionTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".scroll-container",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2
+      }
+    });
+
+    fashionTl
+      // Stage 1: Drape moves to left and tilts (Look 01 -> Matière)
+      .to(fashionGroup.position, { x: -1.6, y: 0.2, z: 1.2, ease: "none" }, 0)
+      .to(clothMesh.rotation, { y: -0.6, x: 0.3, ease: "none" }, 0)
+      .to(goldRing.scale, { x: 1.4, y: 1.4, z: 1.4, ease: "none" }, 0)
+
+      // Stage 2: Camera orbits, cloth undulates (Matière -> Silhouette)
+      .to(fashionGroup.position, { x: 1.8, y: -0.3, z: 1.8, ease: "none" }, 0.4)
+      .to(clothMesh.rotation, { y: 1.2, x: -0.2, ease: "none" }, 0.4)
+
+      // Stage 3: Silhouette re-centers (Silhouette -> Boutique)
+      .to(fashionGroup.position, { x: -1.2, y: 0.1, z: 2.2, ease: "none" }, 0.75)
+      .to(clothMesh.rotation, { y: 0.1, x: 0.1, ease: "none" }, 0.75);
+
+    // --- CURSOR TRACKING ---
+    const cursor = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    window.addEventListener('pointermove', (e) => {
+      cursor.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      cursor.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // --- RENDER LOOP & FABRIC DISPLACEMENT ---
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const time = clock.getElapsedTime();
+
+      // Damped Cursor
+      cursor.x += (cursor.targetX - cursor.x) * 0.05;
+      cursor.y += (cursor.targetY - cursor.y) * 0.05;
+
+      cursorLight.position.set(cursor.x * 5, cursor.y * 4, 3);
+
+      // Parallax Tilt
+      fashionGroup.rotation.z = cursor.x * 0.12;
+      fashionGroup.position.y += Math.sin(time * 0.8) * 0.001;
+
+      // Realistic Wavy Cloth Simulation via Vertex Noise
+      const positions = clothGeom.attributes.position;
+      for (let i = 0; i < positions.count; i++) {
+        const u = initialPos[i * 3];
+        const v = initialPos[i * 3 + 1];
+        
+        // Sinusoidal wind waves + cursor influence
+        const waveZ = Math.sin(u * 1.5 + time * 2.0) * 0.25 + 
+                      Math.cos(v * 2.0 + time * 1.5) * 0.2 +
+                      (cursor.x * u * 0.15);
+        
+        positions.setZ(i, waveZ);
+      }
+      positions.needsUpdate = true;
+      clothGeom.computeVertexNormals();
+
+      // Slow gold ring rotation
+      goldRing.rotation.z += 0.005;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // --- RESIZE ---
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+  </script>
+</body>
+</html>

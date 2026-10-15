@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA // Studio Digital & Direction Artistique (Dribbble & Awwwards Grade)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-subtle: #f8f9fb;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.03);
+      --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.08);
+      --radius: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Header Nav */
+    nav {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 6%;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      background: #eff6ff;
+      color: var(--accent);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn-contact {
+      background: var(--text);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.7rem 1.6rem;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn-contact:hover {
+      background: #000;
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section (Clean White Studio with Real Apple Display Mockup) */
+    .hero-section {
+      max-width: 1300px;
+      margin: 4rem auto 6rem;
+      padding: 0 4%;
+      text-align: center;
+    }
+
+    .award-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 0.4rem 1.2rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+
+    .award-pill span {
+      color: #eab308;
+    }
+
+    h1 {
+      font-size: 4.4rem;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      max-width: 950px;
+      margin: 0 auto 1.5rem;
+      color: #020617;
+    }
+
+    .hero-sub {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 2.5rem;
+      font-weight: 400;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-bottom: 4.5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.9rem 2.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.9rem 2.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+    }
+
+    /* Mockup Showcase Container */
+    .hero-mockup-frame {
+      max-width: 1100px;
+      margin: 0 auto;
+      border-radius: 24px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.12);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #fff;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-mockup-frame:hover {
+      transform: scale(1.015);
+    }
+
+    .hero-mockup-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Client Logos Bar */
+    .clients-strip {
+      max-width: 1100px;
+      margin: 5rem auto;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      opacity: 0.6;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    /* Bento Projects Grid */
+    .works-section {
+      max-width: 1250px;
+      margin: 6rem auto;
+      padding: 0 4%;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .bento-work-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+    }
+
+    .work-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .work-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .work-meta {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .work-card h3 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .work-img-wrapper {
+      margin-top: 2rem;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
+    .work-img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .work-card:hover .work-img-wrapper img {
+      transform: scale(1.04);
+    }
+
+    /* Key Agency Metrics */
+    .metrics-section {
+      background: #0f172a;
+      color: #fff;
+      border-radius: 32px;
+      max-width: 1250px;
+      margin: 6rem auto;
+      padding: 5rem 6%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2.5rem;
+      text-align: center;
+    }
+
+    .metric-item h4 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: #38bdf8;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-item span {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="brand-logo">
+      AURA & CO. <span class="brand-badge">STUDIO</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#projets">Projets</a></li>
+      <li><a href="#expertises">Expertises</a></li>
+      <li><a href="#agence">L'Agence</a></li>
+      <li><a href="#awards">Distinctions</a></li>
+    </ul>
+    <a href="#contact" class="btn-contact">Démarrer un Projet</a>
+  </nav>
+
+  <!-- Hero Section (Dribbble Trending / Awwwards) -->
+  <header class="hero-section">
+    <div class="award-pill">
+      <span>★</span> ÉLUE AGENCE DIGITALE DE L'ANNÉE // AWWWARDS & DRIBBLE BEST OF SHOW
+    </div>
+
+    <h1>Nous créons les interfaces qui définissent les marques de luxe.</h1>
+    
+    <p class="hero-sub">
+      Direction artistique, design systems scalables et architectures WebGL immersives pour les entreprises qui refusent l'ordinaire.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="#projets" class="btn-primary">Découvrir nos Réalisations</a>
+      <a href="#contact" class="btn-secondary">Estimer un Projet</a>
+    </div>
+
+    <!-- Apple Display Real Mockup -->
+    <div class="hero-mockup-frame">
+      <img src="assets/hero-display.jpg" alt="AURA & CO. Showcase UI on Apple Display" class="hero-mockup-img">
+    </div>
+  </header>
+
+  <!-- Client Logos Strip -->
+  <div class="clients-strip">
+    <span>BALENCIAGA</span>
+    <span>LVMH DIGITAL</span>
+    <span>PORSCHE LABS</span>
+    <span>LINEAR</span>
+    <span>NOTION</span>
+  </div>
+
+  <!-- Bento Works Section -->
+  <section class="works-section" id="projets">
+    <div class="section-header">
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase;">Sélection de Projets</span>
+        <h2>EXPÉRIENCES EN PRODUCTION</h2>
+      </div>
+      <a href="#" class="btn-secondary">Voir les 24 Projets →</a>
+    </div>
+
+    <div class="bento-work-grid">
+      <!-- Card 1 : Mobile App Luxury Fashion -->
+      <div class="work-card">
+        <div>
+          <span class="work-meta">Application Mobile iOS // Haute Couture</span>
+          <h3>L'Élégance Mode — E-commerce & Lookbook 3D</h3>
+          <p style="color: var(--text-muted);">
+            Refonte complète de l'expérience d'achat mobile pour la maison de couture parisienne. Temps de chargement inférieur à 0.6s et checkout Apple Pay en 1-tap.
+          </p>
+        </div>
+        <div class="work-img-wrapper">
+          <img src="assets/case-mobile.jpg" alt="Application Mobile Luxury Fashion Mockup">
+        </div>
+      </div>
+
+      <!-- Card 2 : Fintech SaaS Dashboard -->
+      <div class="work-card">
+        <div>
+          <span class="work-meta">Design System & Plateforme SaaS</span>
+          <h3>Aura Cloud — Infrastructure d'Inférence IA</h3>
+          <p style="color: var(--text-muted);">
+            Conception du cockpit de gestion des clusters GPU haute performance. Une interface épurée blanche avec visualisations de flux en temps réel.
+          </p>
+        </div>
+        <div class="work-img-wrapper">
+          <img src="assets/hero-display.jpg" alt="Aura Cloud SaaS UI Mockup">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics Section -->
+  <div class="metrics-section">
+    <div class="metric-item">
+      <h4>28×</h4>
+      <span>Prix Internationaux (Awwwards, FWA)</span>
+    </div>
+    <div class="metric-item">
+      <h4>$240M</h4>
+      <span>Levés par nos clients après refonte</span>
+    </div>
+    <div class="metric-item">
+      <h4>0.4s</h4>
+      <span>Vitesse moyenne de chargement</span>
+    </div>
+    <div class="metric-item">
+      <h4>99.4%</h4>
+      <span>Taux de satisfaction client</span>
+    </div>
+  </div>
+
+</body>
+</html>

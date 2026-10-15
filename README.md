@@ -14,13 +14,27 @@ Compatible with **Claude Code**, **Cursor**, **Antigravity**, **OpenCode**, **Co
 | **[`anthropic-skills/`](./anthropic-skills)** | Anthropic Official | Official reference standard for `SKILL.md` and production document engines. | Document creators & editors (`docx`, `pdf`, `pptx`, `xlsx`), official specifications |
 | **[`awesome-agent-skills/`](./awesome-agent-skills)** | Awesome Agent Skills | Ready-to-run automation recipes and workflow playbooks. | `mcp-builder`, `webapp-testing`, `canvas-design`, `artifacts-builder`, `file-organizer` |
 | **[`ui-ux-pro-max/`](./ui-ux-pro-max)** | Antigravity Engine | Elite UI/UX design intelligence and frontend architecture guidelines. | Component systems, design tokens, color harmonies, micro-animations, CLI |
+| **[`bencium-marketplace/`](./bencium-marketplace)** | Bencium.io | 17 elite UX, design, and architecture skills preventing generic AI aesthetics. | `bencium-impact-designer`, `bencium-innovative-ux-designer`, `design-audit`, `typography` |
+| **[`ui-ux-pro-max-skill/`](./ui-ux-pro-max-skill)** | NextLevelBuilder | Canonical repository for UI/UX Pro Max design intelligence engine. | 79 UI styles, 192 color palettes, 74 font pairings, 119 UX guidelines, CLI |
+| **[`ultra-3d-web-experience/`](./ultra-3d-web-experience)** | Master Agent Engine | Award-winning interactive 3D websites with bidirectional scroll & cursor physics. | 6 industry presets (FinTech, Sneakers, Agency, Beauty, Tech, Fashion), Three.js + GSAP rig |
 | **[`vercel-skills-cli/`](./vercel-skills-cli)** | Vercel Labs | Cross-agent skill loader and distribution CLI. | Universal `npx skills` engine, TypeScript CLI runtime, agent connectors |
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Using the Universal CLI (Vercel Labs Engine)
+### 1. Generating Award-Winning 3D Websites
+Scaffold any of the 6 luxury 3D websites in 1 second:
+```bash
+# Scaffold a Mobile FinTech & Neobank 3D Showcase
+node ultra-3d-web-experience/scripts/scaffold-3d.js --preset fintech --out ./my-fintech
+
+# Scaffold a Sneaker Configurator
+node ultra-3d-web-experience/scripts/scaffold-3d.js --preset sneakers --out ./my-sneakers
+```
+Available presets: `fintech`, `sneakers`, `agency`, `hair-beauty`, `tech`, `fashion`.
+
+### 2. Using the Universal CLI (Vercel Labs Engine)
 ```bash
 cd vercel-skills-cli
 pnpm install
@@ -32,20 +46,20 @@ Install skills into any agent:
 npx skills add vercel-labs/agent-skills
 ```
 
-### 2. Exploring 2,690+ Skills Catalog
+### 3. Exploring 2,690+ Skills Catalog
 Browse the complete catalog in [`aas-core-skills/CATALOG.md`](./aas-core-skills/CATALOG.md) or query the local index:
 ```bash
 cat aas-core-skills/skills_index.json
 ```
 
-### 3. Using Production Document Engines (Anthropic)
+### 4. Using Production Document Engines (Anthropic)
 Access the battle-tested document generation skills:
 * **Word Documents**: [`anthropic-skills/skills/docx`](./anthropic-skills/skills/docx)
 * **PDFs**: [`anthropic-skills/skills/pdf`](./anthropic-skills/skills/pdf)
 * **PowerPoint Presentations**: [`anthropic-skills/skills/pptx`](./anthropic-skills/skills/pptx)
 * **Spreadsheets**: [`anthropic-skills/skills/xlsx`](./anthropic-skills/skills/xlsx)
 
-### 4. Injecting Modern UI/UX Guidelines
+### 5. Injecting Modern UI/UX Guidelines
 To empower your agent with senior frontend & UI design capabilities, point your agent to:
 * [`ui-ux-pro-max/`](./ui-ux-pro-max)
 

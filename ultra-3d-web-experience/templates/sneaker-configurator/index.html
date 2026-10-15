@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER — 3D Dimensional Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --text: #ffffff;
+      --text-muted: #8b92a5;
+      --accent: #22d3ee;
+      --accent-glow: rgba(34, 211, 238, 0.25);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      selection-background-color: var(--accent);
+    }
+
+    /* Full-Bleed Continuous 3D WebGL Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Ambient Depth Glow (Background Layer) */
+    .bg-space {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 60% 40%, rgba(34, 211, 238, 0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
+    }
+
+    /* Interactive 3D Orbit Layer */
+    .interaction-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      pointer-events: auto;
+      cursor: grab;
+    }
+
+    .interaction-overlay:active {
+      cursor: grabbing;
+    }
+
+    /* Navigation Bar */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 2.2rem 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      pointer-events: auto;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+    }
+
+    .logo-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 3rem;
+      list-style: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-menu a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-menu a:hover {
+      color: #fff;
+    }
+
+    .nav-cta {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.75rem 1.8rem;
+      border-radius: 999px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .nav-cta:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Scrollytelling Sections */
+    .scroll-flow {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Section 1 : Hero (Libre, sans aucun cadre) */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 6% 8rem;
+    }
+
+    .hero-content {
+      max-width: 820px;
+      pointer-events: auto;
+    }
+
+    h1.hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3.8rem, 8vw, 7.5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    p.hero-text {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      line-height: 1.6;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+    }
+
+    .inspection-hint {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .orbit-icon {
+      width: 20px;
+      height: 20px;
+      border: 1.5px dashed var(--accent);
+      border-radius: 50%;
+      animation: spin 8s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Point-of-Interest Quick Angle Buttons (Floating HUD) */
+    .angle-hud {
+      position: fixed;
+      bottom: 2.5rem;
+      right: 6%;
+      z-index: 50;
+      display: flex;
+      gap: 0.8rem;
+      pointer-events: auto;
+      background: rgba(18, 20, 29, 0.8);
+      backdrop-filter: blur(20px);
+      padding: 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .angle-hud button {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .angle-hud button.active, .angle-hud button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* Section 2 : Pinned 3D Rotation with Scrolling Step Text */
+    .pinned-story-section {
+      height: 350vh;
+      position: relative;
+    }
+
+    .pinned-container {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 6%;
+      overflow: hidden;
+    }
+
+    .story-step {
+      position: absolute;
+      left: 6%;
+      max-width: 480px;
+      opacity: 0;
+      transform: translateY(40px);
+      pointer-events: auto;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .story-step.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .story-step h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
+
+    .story-step p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Section 3 : Stacking Cards (Les images/panneaux qui se déposent les uns sur les autres) */
+    .stacking-section {
+      position: relative;
+      padding: 10rem 6%;
+      pointer-events: auto;
+    }
+
+    .stacking-headline {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 5rem;
+      max-width: 700px;
+      line-height: 1.1;
+    }
+
+    .stack-cards-wrapper {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .stacked-card {
+      position: sticky;
+      top: 15vh;
+      background: #14161f;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 4rem;
+      margin-bottom: 8vh;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .stacked-card:nth-child(1) { top: 12vh; z-index: 1; }
+    .stacked-card:nth-child(2) { top: 16vh; z-index: 2; }
+    .stacked-card:nth-child(3) { top: 20vh; z-index: 3; }
+
+    .stacked-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      line-height: 1.1;
+    }
+
+    .stacked-card p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .card-media-box {
+      border-radius: 18px;
+      overflow: hidden;
+      background: #1e2230;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-media-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Section 4 : Final Callout & Flying Exit */
+    .closing-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 6%;
+      pointer-events: auto;
+    }
+
+    .closing-section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      line-height: 1;
+    }
+
+    .btn-action-large {
+      background: #fff;
+      color: #000;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 1.3rem 3.5rem;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-action-large:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 70px rgba(255, 255, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Lighting Layer -->
+  <div class="bg-space"></div>
+
+  <!-- Interactive 3D Free-Orbit Canvas Layer -->
+  <div class="interaction-overlay" id="drag-surface"></div>
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Navigation with Vector SVG Logo -->
+  <nav>
+    <a href="#" class="logo-container">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="20,2 38,34 2,34" stroke="white" stroke-width="3" fill="none" />
+        <circle cx="20" cy="22" r="5" fill="#22d3ee" />
+      </svg>
+      <span class="logo-title">AETHER</span>
+    </a>
+    <ul class="nav-menu">
+      <li><a href="#story">Exploration 3D</a></li>
+      <li><a href="#technologie">Architecture</a></li>
+      <li><a href="#specs">Composants</a></li>
+    </ul>
+    <a href="#commander" class="nav-cta">Commander — 340 €</a>
+  </nav>
+
+  <!-- Angle View HUD (Camera Target Controls in 3D Space) -->
+  <div class="angle-hud">
+    <button class="active" id="btn-profile">Profil</button>
+    <button id="btn-top">Dessus</button>
+    <button id="btn-sole">Semelle</button>
+    <button id="btn-heel">Talon</button>
+  </div>
+
+  <!-- Continuous Scrollytelling Flow -->
+  <div class="scroll-flow">
+
+    <!-- Section 1 : Hero (Spacieux, épuré, zéro grand cadre) -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">DIMENSION PURA</h1>
+        <p class="hero-text">
+          Une étude tridimensionnelle du mouvement. Cliquez et glissez dans l'espace pour examiner chaque angle ou scrollez pour déclencher la chorégraphie.
+        </p>
+        <div class="inspection-hint">
+          <div class="orbit-icon"></div>
+          <span>Espace 3D Vectoriel Libre (X, Y, Z)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2 : Pinned 3D Scrollytelling (L'objet tourne sur ses axes au fil du scroll) -->
+    <section class="pinned-story-section" id="story">
+      <div class="pinned-container">
+        
+        <!-- Step 1 -->
+        <div class="story-step active" id="step-1">
+          <h2>Tige Aéroknit Monobloc</h2>
+          <p>Tissage thermorégulé d'un seul tenant sans aucune couture abrasive. Le maillage s'adapte en temps réel à l'expansion volumétrique du pied pendant l'impact.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="story-step" id="step-2">
+          <h2>Châssis Carbone 3K</h2>
+          <p>Plaque de stabilisation géométrique insérée entre les deux couches d'amorti. Rigidité torsionnelle absolue et restitution d'énergie vectorielle instantanée.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="story-step" id="step-3">
+          <h2>Semelle Azote Cryogénique</h2>
+          <p>Cellules de mousse expansées sous azote liquide sous haute pression. Zéro tassement mécanique et retour dynamique à 88%.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 3 : Stacking Cards (Les cartes technologiques qui se déposent au scroll) -->
+    <section class="stacking-section" id="technologie">
+      <h2 class="stacking-headline">Ingénierie & Matières en Suspension</h2>
+
+      <div class="stack-cards-wrapper">
+        
+        <!-- Card 1 -->
+        <div class="stacked-card">
+          <div>
+            <h3>Fibre de Carbone Aéronautique</h3>
+            <p>Développée selon les mêmes spécifications que les fuselages hypersoniques. Une résistance à la rupture inégalée pour un poids plume de 24 grammes.</p>
+          </div>
+          <div class="card-media-box">
+            <img src="assets/sole-macro.jpg" alt="Plaque Carbone et Semelle">
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="stacked-card">
+          <div>
+            <h3>Empreinte Géodésique</h3>
+            <p>Profil de traction biométrique étudié en soufflerie pour canaliser l'eau et garantir une adhérence maximale sur sol humide.</p>
+          </div>
+          <div class="card-media-box">
+            <img src="assets/hero-white.jpg" alt="Profil Sneaker">
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="stacked-card">
+          <div>
+            <h3>Finition Furtive Noir Onyx</h3>
+            <p>Traitement de surface céramique antireflet pour une longévité accrue face aux abrasions urbaines et aux intempéries.</p>
+          </div>
+          <div class="card-media-box">
+            <img src="assets/hero-black.jpg" alt="Sneaker Stealth Noir">
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4 : Closing Section & Envolée Finale -->
+    <section class="closing-section" id="commander">
+      <h2>PRÊT POUR L'EXPÉDITION</h2>
+      <a href="#" class="btn-action-large">Acquérir l'Édition 01</a>
+    </section>
+
+  </div>
+
+  <!-- Three.js + GSAP + ScrollTrigger via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // --- 1. THREE.JS VECTOR SPACE INITIALIZATION (X, Y, Z) ---
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0b0c10, 0.04);
+
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 8.5);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+
+    // --- 2. LIGHTING SYSTEM ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    keyLight.position.set(6, 8, 6);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0x22d3ee, 3.0);
+    rimLight.position.set(-6, -4, -4);
+    scene.add(rimLight);
+
+    const floorLight = new THREE.PointLight(0x6366f1, 2.0, 15);
+    floorLight.position.set(0, -5, 2);
+    scene.add(floorLight);
+
+    // --- 3. HIGH-FIDELITY 3D SNEAKER MESH HIERARCHY ---
+    const shoeMasterGroup = new THREE.Group();
+    scene.add(shoeMasterGroup);
+
+    // Materials
+    const soleMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      roughness: 0.25,
+      metalness: 0.4
+    });
+
+    const carbonMaterial = new THREE.MeshStandardMaterial({
+      color: 0x090a0f,
+      roughness: 0.1,
+      metalness: 0.95
+    });
+
+    const cushionMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x22d3ee,
+      emissive: 0x0891b2,
+      emissiveIntensity: 0.3,
+      transmission: 0.75,
+      opacity: 0.9,
+      transparent: true,
+      roughness: 0.15,
+      ior: 1.45
+    });
+
+    const upperMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf1f5f9,
+      roughness: 0.3,
+      metalness: 0.15
+    });
+
+    // 3D Geometry Sculpting
+    // A. Sculpted Sole Base
+    const soleCurve = new THREE.BoxGeometry(4.2, 0.45, 1.6, 16, 2, 8);
+    const soleMesh = new THREE.Mesh(soleCurve, soleMaterial);
+    soleMesh.position.y = -0.9;
+    shoeMasterGroup.add(soleMesh);
+
+    // B. Carbon Fiber Propulsion Plate
+    const plateGeom = new THREE.BoxGeometry(3.8, 0.08, 1.3);
+    const plateMesh = new THREE.Mesh(plateGeom, carbonMaterial);
+    plateMesh.position.y = -0.65;
+    shoeMasterGroup.add(plateMesh);
+
+    // C. Nitrogen Cryo Cushion Pods (Tubes & Spheres)
+    for (let x = -1.4; x <= 1.4; x += 0.7) {
+      const podGeom = new THREE.CylinderGeometry(0.3, 0.3, 0.4, 24);
+      podGeom.rotateZ(Math.PI / 2);
+      const podMesh = new THREE.Mesh(podGeom, cushionMaterial);
+      podMesh.position.set(x, -0.42, 0);
+      shoeMasterGroup.add(podMesh);
+    }
+
+    // D. Sculpted Upper Contour
+    const upperGeom = new THREE.ConeGeometry(1.8, 2.6, 32);
+    upperGeom.rotateZ(-Math.PI / 2.3);
+    const upperMesh = new THREE.Mesh(upperGeom, upperMaterial);
+    upperMesh.scale.set(1.15, 0.7, 0.9);
+    upperMesh.position.set(0.2, 0.35, 0);
+    shoeMasterGroup.add(upperMesh);
+
+    // E. Ankle Collar & Tongue
+    const collarGeom = new THREE.TorusGeometry(0.65, 0.18, 16, 32);
+    collarGeom.rotateX(Math.PI / 2);
+    const collarMesh = new THREE.Mesh(collarGeom, soleMaterial);
+    collarMesh.position.set(-0.85, 0.85, 0);
+    shoeMasterGroup.add(collarMesh);
+
+    // F. Geometric Wireframe Accents
+    const wireGeom = new THREE.BoxGeometry(4.3, 2.2, 1.7);
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: 0x22d3ee,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.1
+    });
+    const wireCage = new THREE.Mesh(wireGeom, wireMat);
+    shoeMasterGroup.add(wireCage);
+
+    // Initial 3D Spatial Orientation
+    shoeMasterGroup.position.set(1.4, 0, 0);
+    shoeMasterGroup.rotation.set(0.2, -0.6, 0.1);
+
+    // --- 4. INTERACTIVE 3D ORBIT & DRAG PHYSICS (X, Y, Z) ---
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    let dragVelocityX = 0;
+    let dragVelocityY = 0;
+
+    const dragSurface = document.getElementById('drag-surface');
+
+    dragSurface.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMouseX;
+      const deltaY = e.clientY - prevMouseY;
+
+      dragVelocityX = deltaX * 0.008;
+      dragVelocityY = deltaY * 0.008;
+
+      shoeMasterGroup.rotation.y += dragVelocityX;
+      shoeMasterGroup.rotation.x += dragVelocityY;
+
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDragging = false;
+    });
+
+    // --- 5. CAMERA PRESET HUD SWITCHER (FOCUS SUR POINTS PRÉCIS) ---
+    const angles = {
+      profile: { rotX: 0.2, rotY: -0.6, rotZ: 0.1, camZ: 8.5 },
+      top:     { rotX: Math.PI / 2 - 0.2, rotY: 0, rotZ: 0, camZ: 8.0 },
+      sole:    { rotX: -Math.PI / 2 + 0.3, rotY: 0, rotZ: Math.PI / 2, camZ: 7.5 },
+      heel:    { rotX: 0.1, rotY: Math.PI - 0.4, rotZ: 0, camZ: 8.0 }
+    };
+
+    function setAngle(presetName, btn) {
+      document.querySelectorAll('.angle-hud button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const target = angles[presetName];
+      gsap.to(shoeMasterGroup.rotation, {
+        x: target.rotX,
+        y: target.rotY,
+        z: target.rotZ,
+        duration: 1.2,
+        ease: "power2.out"
+      });
+      gsap.to(camera.position, {
+        z: target.camZ,
+        duration: 1.2,
+        ease: "power2.out"
+      });
+    }
+
+    document.getElementById('btn-profile').addEventListener('click', (e) => setAngle('profile', e.target));
+    document.getElementById('btn-top').addEventListener('click', (e) => setAngle('top', e.target));
+    document.getElementById('btn-sole').addEventListener('click', (e) => setAngle('sole', e.target));
+    document.getElementById('btn-heel').addEventListener('click', (e) => setAngle('heel', e.target));
+
+    // --- 6. SCROLLTRIGGER CHOREOGRAPHY (PINNING + ROTATION AU SCROLL) ---
+    
+    // Pinning Section 2 : l'objet tourne sur ses axes pendant que les textes s'enchaînent
+    const storyTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".pinned-story-section",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.0,
+        onUpdate: (self) => {
+          const p = self.progress;
+          // Step 1 : 0.0 to 0.33
+          // Step 2 : 0.33 to 0.66
+          // Step 3 : 0.66 to 1.0
+          const s1 = document.getElementById('step-1');
+          const s2 = document.getElementById('step-2');
+          const s3 = document.getElementById('step-3');
+
+          if (p < 0.33) {
+            s1.classList.add('active');
+            s2.classList.remove('active');
+            s3.classList.remove('active');
+          } else if (p < 0.66) {
+            s1.classList.remove('active');
+            s2.classList.add('active');
+            s3.classList.remove('active');
+          } else {
+            s1.classList.remove('active');
+            s2.classList.remove('active');
+            s3.classList.add('active');
+          }
+        }
+      }
+    });
+
+    // Rotation vectorielle continue synchronisée au scroll (montant comme descendant)
+    storyTimeline
+      .to(shoeMasterGroup.position, { x: 1.8, y: 0, z: 0.5, ease: "none" }, 0)
+      .to(shoeMasterGroup.rotation, { y: Math.PI * 1.5, x: 0.4, ease: "none" }, 0)
+      
+      .to(shoeMasterGroup.position, { x: 1.4, y: 0.3, z: 1.2, ease: "none" }, 0.4)
+      .to(shoeMasterGroup.rotation, { y: Math.PI * 2.8, x: -0.5, z: 0.3, ease: "none" }, 0.4)
+      
+      .to(shoeMasterGroup.position, { x: 0, y: 0.2, z: 2.2, ease: "none" }, 0.75)
+      .to(shoeMasterGroup.rotation, { y: Math.PI * 4.0, x: 0.1, z: 0, ease: "none" }, 0.75);
+
+    // Section 4 : Envolée vers le haut de la chaussure à la fin du scroll
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: ".closing-section",
+        start: "top center",
+        end: "bottom bottom",
+        scrub: 1.2
+      }
+    })
+    .to(shoeMasterGroup.position, { y: 6.0, z: -3.0, ease: "power2.in" })
+    .to(shoeMasterGroup.rotation, { x: Math.PI, y: Math.PI * 2, ease: "power2.in" });
+
+    // --- 7. ANIMATION LOOP & INERTIA ---
+    const clock = new THREE.Clock();
+
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
+      const time = clock.getElapsedTime();
+
+      // Inertial damping on manual drag
+      if (!isDragging) {
+        dragVelocityX *= 0.92;
+        dragVelocityY *= 0.92;
+        shoeMasterGroup.rotation.y += dragVelocityX;
+        shoeMasterGroup.rotation.x += dragVelocityY;
+      }
+
+      // Subtle ambient hover
+      shoeMasterGroup.position.y += Math.sin(time * 1.5) * 0.001;
+
+      renderer.render(scene, camera);
+    }
+    renderLoop();
+
+    // --- 8. RESIZE HANDLER ---
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+  </script>
+</body>
+</html>

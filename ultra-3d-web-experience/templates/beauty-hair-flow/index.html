@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA // Soin Capillaire Haute Précision & Rituel Soie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0d0a08;
+      --card-bg: rgba(26, 21, 18, 0.75);
+      --card-border: rgba(226, 187, 148, 0.2);
+      --gold: #e2bb94;
+      --gold-glow: rgba(226, 187, 148, 0.35);
+      --text: #fdfaf6;
+      --text-muted: #c4b5a5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: default;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* WebGL Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Ambient Warm Glow */
+    .ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(circle at 70% 30%, rgba(226, 187, 148, 0.08) 0%, transparent 60%);
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 2.5rem 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(226, 187, 148, 0.1);
+    }
+
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 3rem;
+      list-style: none;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .nav-menu a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-menu a:hover {
+      color: var(--gold);
+    }
+
+    .btn-ritual {
+      background: linear-gradient(135deg, #d4a373, #faedcd);
+      color: #1a1512;
+      padding: 0.75rem 2rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 0 30px var(--gold-glow);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-ritual:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(226, 187, 148, 0.6);
+    }
+
+    /* Scrollytelling Sections */
+    .scroll-container {
+      position: relative;
+      z-index: 10;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 8%;
+      pointer-events: none;
+    }
+
+    .luxury-panel {
+      max-width: 540px;
+      pointer-events: auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(30px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 3.5rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .sub-head {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      display: block;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.6rem;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .align-right {
+      justify-content: flex-end;
+    }
+
+    /* Feature Pillars */
+    .ingredient-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(226, 187, 148, 0.15);
+    }
+
+    .ingredient h5 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+
+    .ingredient span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    /* Scroll Indicator */
+    .gold-scroll-hint {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+  <div class="ambient-glow"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand">AURA PARFUMS & SOIN</div>
+    <ul class="nav-menu">
+      <li><a href="#rituel">Le Rituel</a></li>
+      <li><a href="#goutte">L'Élixir</a></li>
+      <li><a href="#soie">La Fibre Soie</a></li>
+    </ul>
+    <a href="#boutique" class="btn-ritual">Commander — 165 €</a>
+  </nav>
+
+  <div class="gold-scroll-hint">
+    <span>Scrollez pour animer le fluide</span>
+    <span style="font-size: 1rem;">↓</span>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="scroll-container">
+    
+    <!-- Section 1 : Introduction -->
+    <section id="rituel">
+      <div class="luxury-panel">
+        <span class="sub-head">// Rituel Botanique & Alchimie 3D</span>
+        <h1>L'Élixir Précieux des Cheveux de Soie.</h1>
+        <p>Infusion d'huiles rares de camélia japonais et peptides d'or 24 carats. Une nutrition cellulaire instantanée qui scelle la cuticule pour une brillance miroir infinie.</p>
+        <div class="ingredient-list">
+          <div class="ingredient">
+            <h5>Huile de Tsubaki</h5>
+            <span>Nutrition Profonde</span>
+          </div>
+          <div class="ingredient">
+            <h5>Peptides Dorés</h5>
+            <span>Régénération Keratine</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2 : Goutte d'Or & Pipette -->
+    <section id="goutte" class="align-right">
+      <div class="luxury-panel">
+        <span class="sub-head">// Extraction de Pureté</span>
+        <h2>UNE GOUTTE SUFFIT</h2>
+        <p>Observez la pipette de verre monter délicatement et la goutte de nectar d'or se libérer avec une tension de surface ultraréaliste. Scrollez vers le haut pour rembobiner le flux.</p>
+        <div class="ingredient-list">
+          <div class="ingredient">
+            <h5>99.4%</h5>
+            <span>Ingrédients Bio-Actifs</span>
+          </div>
+          <div class="ingredient">
+            <h5>0%</h5>
+            <span>Silicones ou Parabènes</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 : Soie Capillaire -->
+    <section id="soie">
+      <div class="luxury-panel">
+        <span class="sub-head">// Mouvement Organique</span>
+        <h2>LE RUBAN DE SOIE 3D</h2>
+        <p>Simulation tridimensionnelle de la fibre capillaire : souplesse aérodynamique, résistance thermique jusqu'à 230°C et toucher velours sans alourdir la chevelure.</p>
+        <div class="ingredient-list">
+          <div class="ingredient">
+            <h5>+94%</h5>
+            <span>Brillance Miroir</span>
+          </div>
+          <div class="ingredient">
+            <h5>-78%</h5>
+            <span>Frisottis Instantanés</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 : Boutique / Flacon -->
+    <section id="boutique" class="align-right">
+      <div class="luxury-panel">
+        <span class="sub-head">// Le Flacon Sculpté</span>
+        <h2>OFFREZ-VOUS LA SOIE</h2>
+        <p>Flacon de verre lourd rechargeable soufflé à la main, sérigraphié à l'or pur. Un bijou pour votre coiffeuse et un soin transformateur pour vos longueurs.</p>
+        <a href="#" class="btn-ritual" style="display: inline-block;">Acquérir le Flacon 50ml</a>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // --- THREE.JS SCENE SETUP ---
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0d0a08, 0.06);
+
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 8);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // --- LIGHTS ---
+    const ambientLight = new THREE.AmbientLight(0xfff5eb, 0.6);
+    scene.add(ambientLight);
+
+    const goldKeyLight = new THREE.DirectionalLight(0xe2bb94, 2.5);
+    goldKeyLight.position.set(5, 8, 4);
+    scene.add(goldKeyLight);
+
+    const softFillLight = new THREE.PointLight(0xffecd2, 1.5, 12);
+    softFillLight.position.set(-4, -2, 3);
+    scene.add(softFillLight);
+
+    const cursorLight = new THREE.PointLight(0xe2bb94, 1.8, 8);
+    scene.add(cursorLight);
+
+    // --- COSMETIC 3D OBJECTS HIERARCHY ---
+    const cosmeticGroup = new THREE.Group();
+    scene.add(cosmeticGroup);
+
+    // 1. Frosted Glass Bottle
+    const bottleGeom = new THREE.CylinderGeometry(0.8, 0.9, 2.6, 32);
+    const glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0xfff6ee,
+      transmission: 0.9,
+      opacity: 1,
+      transparent: true,
+      roughness: 0.1,
+      ior: 1.5,
+      reflectivity: 0.8
+    });
+    const bottleMesh = new THREE.Mesh(bottleGeom, glassMat);
+    bottleMesh.position.y = -0.6;
+    cosmeticGroup.add(bottleMesh);
+
+    // 2. Liquid Serum Inside
+    const liquidGeom = new THREE.CylinderGeometry(0.72, 0.82, 2.0, 32);
+    const liquidMat = new THREE.MeshPhysicalMaterial({
+      color: 0xd4a373,
+      emissive: 0xb08968,
+      emissiveIntensity: 0.2,
+      transmission: 0.6,
+      transparent: true,
+      roughness: 0.2
+    });
+    const liquidMesh = new THREE.Mesh(liquidGeom, liquidMat);
+    liquidMesh.position.y = -0.8;
+    cosmeticGroup.add(liquidMesh);
+
+    // 3. Gold Metallic Collar & Cap
+    const capGeom = new THREE.CylinderGeometry(0.5, 0.5, 0.8, 32);
+    const goldMat = new THREE.MeshStandardMaterial({
+      color: 0xe2bb94,
+      metalness: 0.85,
+      roughness: 0.2
+    });
+    const capMesh = new THREE.Mesh(capGeom, goldMat);
+    capMesh.position.y = 1.0;
+    cosmeticGroup.add(capMesh);
+
+    // 4. Pipette Dropper (Displaces upward on scroll)
+    const pipetteGroup = new THREE.Group();
+    cosmeticGroup.add(pipetteGroup);
+
+    const tubeGeom = new THREE.CylinderGeometry(0.08, 0.08, 2.2, 16);
+    const pipetteTube = new THREE.Mesh(tubeGeom, glassMat);
+    pipetteTube.position.y = 1.4;
+    pipetteGroup.add(pipetteTube);
+
+    // Liquid Droplet
+    const dropGeom = new THREE.SphereGeometry(0.18, 24, 24);
+    dropGeom.scale(1, 1.4, 1);
+    const dropMesh = new THREE.Mesh(dropGeom, liquidMat);
+    dropMesh.position.y = 0.2;
+    pipetteGroup.add(dropMesh);
+
+    // 5. Flowing Silk Ribbons (Mimicking Hair Strands)
+    const ribbonGroup = new THREE.Group();
+    scene.add(ribbonGroup);
+
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-4, -2, -2),
+      new THREE.Vector3(-1.5, 1, 0),
+      new THREE.Vector3(1, -0.5, 1),
+      new THREE.Vector3(3.5, 2, -1)
+    ]);
+
+    const ribbonGeom = new THREE.TubeGeometry(curve, 64, 0.12, 12, false);
+    const silkMat = new THREE.MeshPhysicalMaterial({
+      color: 0xe2bb94,
+      roughness: 0.25,
+      metalness: 0.7,
+      clearcoat: 0.8
+    });
+    const ribbonMesh = new THREE.Mesh(ribbonGeom, silkMat);
+    ribbonGroup.add(ribbonMesh);
+
+    // Position initial
+    cosmeticGroup.position.set(1.5, 0, 0);
+
+    // --- BIDIRECTIONAL SCROLL TIMELINE ---
+    const auraTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".scroll-container",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2
+      }
+    });
+
+    auraTl
+      // Stage 1: Pipette raises, bottle shifts to left (Hero -> Goutte)
+      .to(cosmeticGroup.position, { x: -1.6, y: 0.2, z: 1.2, ease: "none" }, 0)
+      .to(cosmeticGroup.rotation, { y: 0.8, x: 0.2, ease: "none" }, 0)
+      .to(pipetteGroup.position, { y: 1.8, ease: "none" }, 0)
+      .to(dropMesh.position, { y: -0.5, scaleX: 1.2, scaleY: 1.5, ease: "none" }, 0)
+
+      // Stage 2: Silk Ribbon weaves around camera (Goutte -> Soie)
+      .to(ribbonGroup.rotation, { y: Math.PI * 1.5, z: 0.4, ease: "none" }, 0.35)
+      .to(ribbonGroup.scale, { x: 1.3, y: 1.3, z: 1.3, ease: "none" }, 0.35)
+      .to(cosmeticGroup.position, { x: 1.8, y: -0.5, z: 1.5, ease: "none" }, 0.35)
+
+      // Stage 3: Return pipette into bottle & center for showcase (Soie -> Boutique)
+      .to(pipetteGroup.position, { y: 0, ease: "none" }, 0.7)
+      .to(dropMesh.position, { y: 0.2, scaleX: 1, scaleY: 1, ease: "none" }, 0.7)
+      .to(cosmeticGroup.position, { x: -1.2, y: 0, z: 2.2, ease: "none" }, 0.7)
+      .to(cosmeticGroup.rotation, { y: Math.PI * 2.2, x: 0, ease: "none" }, 0.7);
+
+    // --- CURSOR TRACKING ---
+    const cursor = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    window.addEventListener('pointermove', (e) => {
+      cursor.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      cursor.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // --- ANIMATION LOOP ---
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const time = clock.getElapsedTime();
+
+      // Damped Cursor
+      cursor.x += (cursor.targetX - cursor.x) * 0.05;
+      cursor.y += (cursor.targetY - cursor.y) * 0.05;
+
+      // Soft light follow
+      cursorLight.position.set(cursor.x * 5, cursor.y * 4, 3);
+
+      // Subtle breathing float
+      cosmeticGroup.position.y += Math.sin(time * 1.2) * 0.0015;
+      cosmeticGroup.rotation.y += 0.003;
+
+      // Ribbon undulating wave
+      ribbonGroup.rotation.x = Math.sin(time * 0.6) * 0.15;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // --- RESIZE ---
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+  </script>
+</body>
+</html>
