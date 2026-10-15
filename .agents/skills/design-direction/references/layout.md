@@ -45,7 +45,34 @@ Toutes les dimensions de marges, paddings, espacements inter-éléments et haute
 
 ## 3. Prompts de Cadrage Créatif (Creative Reframing Prompts)
 
-Pour échapper à la disposition banale en 3 colonnes avec icône bleue au-dessus du titre, employer ces métaphores de cadrage :
+### Original Creative Reframing Prompts (Philosophical Lenses)
+
+When stuck in safe patterns, ask yourself:
+
+**Designer lens:**
+- "What would Sagmeister do?" → Provocation, hand-drawn, conceptual depth
+- "What would Neville Brody do?" → Typography as art, rule-breaking hierarchy
+- "What would Studio Dumbar do?" → Bold color, geometric play, Dutch directness
+- "What would Dieter Rams do?" → Radical reduction, functional beauty
+- "What would David Carson do?" → Destroy the grid, prioritize feeling over reading
+
+**Context shift:**
+- "What if this was a magazine spread?" → Editorial hierarchy, pull quotes, art direction
+- "What if this was a museum exhibit?" → Generous space, quiet typography, specimen presentation
+- "What if this was street signage?" → Maximum legibility, bold simplicity
+- "What if this was a vinyl record cover?" → Square constraint, tactile quality, collectible feel
+- "What if this was a protest poster?" → Urgency, stark contrast, immediate impact
+
+**Era lens:**
+- "1960s Swiss International?" → Grid perfection, Helvetica, rational clarity
+- "1990s Emigre/Ray Gun?" → Chaos, layering, deliberately challenging
+- "1920s Bauhaus?" → Primary colors, geometric forms, functional art
+- "2000s Flash era?" → Motion-first, experimental navigation, surprise
+- "Cyberpunk 2077?" → Neon, glitch, dense information, dark UI
+
+### Archétypes de Disposition Spatiale (Complément d'Orientation — Ajout de Synthèse)
+
+Pour enrichir la réflexion par des métaphores architecturales et spatiales concrètes :
 
 1. **Le Mur de Musée (The Museum Wall)** :
    * Des espaces négatifs massifs, des éléments présentés comme des œuvres d'art uniques avec de petites cartouches descriptives décentrées.
