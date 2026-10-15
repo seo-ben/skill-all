@@ -85,7 +85,7 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
    * Ensure critical HTML copy remains immediately visible when JavaScript is disabled.
    * Avoid setting initial `opacity: 0` in raw static CSS on elements animated by GSAP; let GSAP hide or unmask elements dynamically during runtime initialization.
 3. **Core Web Vitals (LCP & CLS)** :
-   * Reserve layout space for the 3D canvas (e.g., explicit aspect-ratio or min-height) to prevent Cumulative Layout Shift (CLS = 0).
+   * Reserve layout space for the 3D canvas (e.g., explicit aspect-ratio or min-height) to prevent Cumulative Layout Shift; aim for a low CLS (below 0.1).
    * Prioritize rendering above-the-fold HTML/CSS before initializing heavy WebGL scenes to preserve Largest Contentful Paint (LCP).
 4. **Descriptive Image & Canvas Fallbacks** :
    * Include `<canvas role="img" aria-label="3D Interactive Product Model">` with semantic captions and accessible descriptions.
