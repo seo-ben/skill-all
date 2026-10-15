@@ -43,6 +43,55 @@
       pointer-events: none;
     }
 
+    /* 2D Accessible WebGL Fallback */
+    .webgl-fallback {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      background: radial-gradient(circle at 60% 40%, rgba(34, 211, 238, 0.12) 0%, rgba(11, 12, 16, 0.96) 75%);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .fallback-card {
+      max-width: 440px;
+      padding: 2rem 2.5rem;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(34, 211, 238, 0.35);
+      border-radius: 18px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .fallback-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #22d3ee;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .fallback-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #94a3b8;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     /* Ambient Depth Glow (Background Layer) */
     .bg-space {
       position: fixed;
@@ -415,9 +464,15 @@
   <!-- Ambient Lighting Layer -->
   <div class="bg-space"></div>
 
-  <!-- Interactive 3D Free-Orbit Canvas Layer -->
+  <!-- Interactive 3D Free-Orbit Canvas Layer & Accessible 2D Fallback -->
   <div class="interaction-overlay" id="drag-surface"></div>
-  <canvas id="webgl-canvas"></canvas>
+  <canvas id="webgl-canvas" role="img" aria-label="Configurateur 3D interactif de la basket Aether Carbon One"></canvas>
+  <div id="webgl-fallback" class="webgl-fallback">
+    <div class="fallback-card">
+      <span class="fallback-tag">Expérience Visuelle 2D</span>
+      <p>Modèle architectural de la chaussure Aether Carbon One avec semelle sculptée et amorti azote.</p>
+    </div>
+  </div>
 
   <!-- Navigation with Vector SVG Logo -->
   <nav>
@@ -544,24 +599,47 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    // --- 1. THREE.JS VECTOR SPACE INITIALIZATION (X, Y, Z) ---
+    // --- ACCESSIBILITY & WEBGL AVAILABILITY TEST ---
+    function isWebGLAvailable() {
+      try {
+        const testCanvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    }
+
     const canvas = document.getElementById('webgl-canvas');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0b0c10, 0.04);
+    const fallback = document.getElementById('webgl-fallback');
+    const dragSurface = document.getElementById('drag-surface');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 8.5);
+    if (!isWebGLAvailable()) {
+      canvas.style.display = 'none';
+      if (dragSurface) dragSurface.style.display = 'none';
+      if (fallback) fallback.style.display = 'flex';
+    } else {
+      initThreeScene();
+    }
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3;
+    function initThreeScene() {
+      // --- 1. THREE.JS VECTOR SPACE INITIALIZATION (X, Y, Z) ---
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x0b0c10, 0.04);
+
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 8.5);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.3;
 
     // --- 2. LIGHTING SYSTEM ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -712,18 +790,24 @@
       btn.classList.add('active');
 
       const target = angles[presetName];
-      gsap.to(shoeMasterGroup.rotation, {
-        x: target.rotX,
-        y: target.rotY,
-        z: target.rotZ,
-        duration: 1.2,
-        ease: "power2.out"
-      });
-      gsap.to(camera.position, {
-        z: target.camZ,
-        duration: 1.2,
-        ease: "power2.out"
-      });
+      if (prefersReducedMotion) {
+        shoeMasterGroup.rotation.set(target.rotX, target.rotY, target.rotZ);
+        camera.position.z = target.camZ;
+        renderer.render(scene, camera);
+      } else {
+        gsap.to(shoeMasterGroup.rotation, {
+          x: target.rotX,
+          y: target.rotY,
+          z: target.rotZ,
+          duration: 1.2,
+          ease: "power2.out"
+        });
+        gsap.to(camera.position, {
+          z: target.camZ,
+          duration: 1.2,
+          ease: "power2.out"
+        });
+      }
     }
 
     document.getElementById('btn-profile').addEventListener('click', (e) => setAngle('profile', e.target));
@@ -732,80 +816,91 @@
     document.getElementById('btn-heel').addEventListener('click', (e) => setAngle('heel', e.target));
 
     // --- 6. SCROLLTRIGGER CHOREOGRAPHY (PINNING + ROTATION AU SCROLL) ---
-    
-    // Pinning Section 2 : l'objet tourne sur ses axes pendant que les textes s'enchaînent
-    const storyTimeline = gsap.timeline({
-      scrollTrigger: {
+    if (prefersReducedMotion) {
+      ScrollTrigger.create({
         trigger: ".pinned-story-section",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1.0,
-        onUpdate: (self) => {
-          const p = self.progress;
-          // Step 1 : 0.0 to 0.33
-          // Step 2 : 0.33 to 0.66
-          // Step 3 : 0.66 to 1.0
-          const s1 = document.getElementById('step-1');
-          const s2 = document.getElementById('step-2');
-          const s3 = document.getElementById('step-3');
+        start: "top center",
+        onEnter: () => {
+          shoeMasterGroup.position.set(1.4, 0.3, 1.2);
+          shoeMasterGroup.rotation.set(-0.5, Math.PI * 2.8, 0.3);
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          shoeMasterGroup.position.set(1.4, 0, 0);
+          shoeMasterGroup.rotation.set(0.2, -0.6, 0.1);
+          renderer.render(scene, camera);
+        }
+      });
+    } else {
+      const storyTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".pinned-story-section",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.0,
+          onUpdate: (self) => {
+            const p = self.progress;
+            const s1 = document.getElementById('step-1');
+            const s2 = document.getElementById('step-2');
+            const s3 = document.getElementById('step-3');
 
-          if (p < 0.33) {
-            s1.classList.add('active');
-            s2.classList.remove('active');
-            s3.classList.remove('active');
-          } else if (p < 0.66) {
-            s1.classList.remove('active');
-            s2.classList.add('active');
-            s3.classList.remove('active');
-          } else {
-            s1.classList.remove('active');
-            s2.classList.remove('active');
-            s3.classList.add('active');
+            if (p < 0.33) {
+              s1.classList.add('active');
+              s2.classList.remove('active');
+              s3.classList.remove('active');
+            } else if (p < 0.66) {
+              s1.classList.remove('active');
+              s2.classList.add('active');
+              s3.classList.remove('active');
+            } else {
+              s1.classList.remove('active');
+              s2.classList.remove('active');
+              s3.classList.add('active');
+            }
           }
         }
-      }
-    });
+      });
 
-    // Rotation vectorielle continue synchronisée au scroll (montant comme descendant)
-    storyTimeline
-      .to(shoeMasterGroup.position, { x: 1.8, y: 0, z: 0.5, ease: "none" }, 0)
-      .to(shoeMasterGroup.rotation, { y: Math.PI * 1.5, x: 0.4, ease: "none" }, 0)
-      
-      .to(shoeMasterGroup.position, { x: 1.4, y: 0.3, z: 1.2, ease: "none" }, 0.4)
-      .to(shoeMasterGroup.rotation, { y: Math.PI * 2.8, x: -0.5, z: 0.3, ease: "none" }, 0.4)
-      
-      .to(shoeMasterGroup.position, { x: 0, y: 0.2, z: 2.2, ease: "none" }, 0.75)
-      .to(shoeMasterGroup.rotation, { y: Math.PI * 4.0, x: 0.1, z: 0, ease: "none" }, 0.75);
+      storyTimeline
+        .to(shoeMasterGroup.position, { x: 1.8, y: 0, z: 0.5, ease: "none" }, 0)
+        .to(shoeMasterGroup.rotation, { y: Math.PI * 1.5, x: 0.4, ease: "none" }, 0)
+        .to(shoeMasterGroup.position, { x: 1.4, y: 0.3, z: 1.2, ease: "none" }, 0.4)
+        .to(shoeMasterGroup.rotation, { y: Math.PI * 2.8, x: -0.5, z: 0.3, ease: "none" }, 0.4)
+        .to(shoeMasterGroup.position, { x: 0, y: 0.2, z: 2.2, ease: "none" }, 0.75)
+        .to(shoeMasterGroup.rotation, { y: Math.PI * 4.0, x: 0.1, z: 0, ease: "none" }, 0.75);
 
-    // Section 4 : Envolée vers le haut de la chaussure à la fin du scroll
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: ".closing-section",
-        start: "top center",
-        end: "bottom bottom",
-        scrub: 1.2
-      }
-    })
-    .to(shoeMasterGroup.position, { y: 6.0, z: -3.0, ease: "power2.in" })
-    .to(shoeMasterGroup.rotation, { x: Math.PI, y: Math.PI * 2, ease: "power2.in" });
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".closing-section",
+          start: "top center",
+          end: "bottom bottom",
+          scrub: 1.2
+        }
+      })
+      .to(shoeMasterGroup.position, { y: 6.0, z: -3.0, ease: "power2.in" })
+      .to(shoeMasterGroup.rotation, { x: Math.PI, y: Math.PI * 2, ease: "power2.in" });
+    }
 
     // --- 7. ANIMATION LOOP & INERTIA ---
     const clock = new THREE.Clock();
 
     function renderLoop() {
       requestAnimationFrame(renderLoop);
-      const time = clock.getElapsedTime();
 
-      // Inertial damping on manual drag
-      if (!isDragging) {
-        dragVelocityX *= 0.92;
-        dragVelocityY *= 0.92;
-        shoeMasterGroup.rotation.y += dragVelocityX;
-        shoeMasterGroup.rotation.x += dragVelocityY;
+      if (!prefersReducedMotion) {
+        const time = clock.getElapsedTime();
+
+        // Inertial damping on manual drag
+        if (!isDragging) {
+          dragVelocityX *= 0.92;
+          dragVelocityY *= 0.92;
+          shoeMasterGroup.rotation.y += dragVelocityX;
+          shoeMasterGroup.rotation.x += dragVelocityY;
+        }
+
+        // Subtle ambient hover
+        shoeMasterGroup.position.y += Math.sin(time * 1.5) * 0.001;
       }
-
-      // Subtle ambient hover
-      shoeMasterGroup.position.y += Math.sin(time * 1.5) * 0.001;
 
       renderer.render(scene, camera);
     }
@@ -818,6 +913,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
+  }
   </script>
 </body>
 </html>

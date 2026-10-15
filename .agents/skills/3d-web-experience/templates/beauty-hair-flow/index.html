@@ -44,6 +44,55 @@
       pointer-events: none;
     }
 
+    /* 2D Accessible WebGL Fallback */
+    .webgl-fallback {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      background: radial-gradient(circle at 60% 40%, rgba(212, 163, 115, 0.16) 0%, rgba(13, 10, 8, 0.95) 75%);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .fallback-card {
+      max-width: 440px;
+      padding: 2rem 2.5rem;
+      background: rgba(22, 17, 14, 0.88);
+      border: 1px solid rgba(226, 187, 148, 0.28);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .fallback-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #e2bb94;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .fallback-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #d1b8a5;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     /* Ambient Warm Glow */
     .ambient-glow {
       position: fixed;
@@ -224,8 +273,14 @@
 </head>
 <body>
 
-  <!-- WebGL Canvas -->
-  <canvas id="webgl-canvas"></canvas>
+  <!-- WebGL Canvas & Accessible 2D Fallback -->
+  <canvas id="webgl-canvas" role="img" aria-label="Visualisation 3D interactive du sérum de soin et de sa pipette de verre"></canvas>
+  <div id="webgl-fallback" class="webgl-fallback">
+    <div class="fallback-card">
+      <span class="fallback-tag">Expérience Visuelle 2D</span>
+      <p>Flacon de sérum capillaire haute nutrition en verre satiné avec pipette compte-gouttes dorée et rubans de soie.</p>
+    </div>
+  </div>
   <div class="ambient-glow"></div>
 
   <!-- Navigation -->
@@ -324,22 +379,43 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    // --- THREE.JS SCENE SETUP ---
+    // --- ACCESSIBILITY & WEBGL AVAILABILITY TEST ---
+    function isWebGLAvailable() {
+      try {
+        const testCanvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    }
+
     const canvas = document.getElementById('webgl-canvas');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0d0a08, 0.06);
+    const fallback = document.getElementById('webgl-fallback');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 8);
+    if (!isWebGLAvailable()) {
+      canvas.style.display = 'none';
+      if (fallback) fallback.style.display = 'flex';
+    } else {
+      initThreeScene();
+    }
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    function initThreeScene() {
+      // --- THREE.JS SCENE SETUP ---
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x0d0a08, 0.06);
+
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 8);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // --- LIGHTS ---
     const ambientLight = new THREE.AmbientLight(0xfff5eb, 0.6);
@@ -440,33 +516,80 @@
     // Position initial
     cosmeticGroup.position.set(1.5, 0, 0);
 
-    // --- BIDIRECTIONAL SCROLL TIMELINE ---
-    const auraTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".scroll-container",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1.2
-      }
-    });
+    // --- SCROLL TIMELINE (ADAPTED FOR REDUCED-MOTION) ---
+    if (prefersReducedMotion) {
+      // Instant camera & object states on section entries without scrub tweens
+      ScrollTrigger.create({
+        trigger: "#goutte",
+        start: "top center",
+        onEnter: () => {
+          cosmeticGroup.position.set(-1.6, 0.2, 1.2);
+          cosmeticGroup.rotation.set(0.2, 0.8, 0);
+          pipetteGroup.position.y = 1.8;
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          cosmeticGroup.position.set(1.5, 0, 0);
+          cosmeticGroup.rotation.set(0, 0, 0);
+          pipetteGroup.position.y = 0;
+          renderer.render(scene, camera);
+        }
+      });
+      ScrollTrigger.create({
+        trigger: "#soie",
+        start: "top center",
+        onEnter: () => {
+          cosmeticGroup.position.set(1.8, -0.5, 1.5);
+          ribbonGroup.rotation.set(0, Math.PI * 1.5, 0.4);
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          cosmeticGroup.position.set(-1.6, 0.2, 1.2);
+          ribbonGroup.rotation.set(0, 0, 0);
+          renderer.render(scene, camera);
+        }
+      });
+      ScrollTrigger.create({
+        trigger: "#boutique",
+        start: "top center",
+        onEnter: () => {
+          cosmeticGroup.position.set(-1.2, 0, 2.2);
+          cosmeticGroup.rotation.set(0, Math.PI * 2.2, 0);
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          cosmeticGroup.position.set(1.8, -0.5, 1.5);
+          renderer.render(scene, camera);
+        }
+      });
+    } else {
+      const auraTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".scroll-container",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.2
+        }
+      });
 
-    auraTl
-      // Stage 1: Pipette raises, bottle shifts to left (Hero -> Goutte)
-      .to(cosmeticGroup.position, { x: -1.6, y: 0.2, z: 1.2, ease: "none" }, 0)
-      .to(cosmeticGroup.rotation, { y: 0.8, x: 0.2, ease: "none" }, 0)
-      .to(pipetteGroup.position, { y: 1.8, ease: "none" }, 0)
-      .to(dropMesh.position, { y: -0.5, scaleX: 1.2, scaleY: 1.5, ease: "none" }, 0)
+      auraTl
+        // Stage 1: Pipette raises, bottle shifts to left (Hero -> Goutte)
+        .to(cosmeticGroup.position, { x: -1.6, y: 0.2, z: 1.2, ease: "none" }, 0)
+        .to(cosmeticGroup.rotation, { y: 0.8, x: 0.2, ease: "none" }, 0)
+        .to(pipetteGroup.position, { y: 1.8, ease: "none" }, 0)
+        .to(dropMesh.position, { y: -0.5, scaleX: 1.2, scaleY: 1.5, ease: "none" }, 0)
 
-      // Stage 2: Silk Ribbon weaves around camera (Goutte -> Soie)
-      .to(ribbonGroup.rotation, { y: Math.PI * 1.5, z: 0.4, ease: "none" }, 0.35)
-      .to(ribbonGroup.scale, { x: 1.3, y: 1.3, z: 1.3, ease: "none" }, 0.35)
-      .to(cosmeticGroup.position, { x: 1.8, y: -0.5, z: 1.5, ease: "none" }, 0.35)
+        // Stage 2: Silk Ribbon weaves around camera (Goutte -> Soie)
+        .to(ribbonGroup.rotation, { y: Math.PI * 1.5, z: 0.4, ease: "none" }, 0.35)
+        .to(ribbonGroup.scale, { x: 1.3, y: 1.3, z: 1.3, ease: "none" }, 0.35)
+        .to(cosmeticGroup.position, { x: 1.8, y: -0.5, z: 1.5, ease: "none" }, 0.35)
 
-      // Stage 3: Return pipette into bottle & center for showcase (Soie -> Boutique)
-      .to(pipetteGroup.position, { y: 0, ease: "none" }, 0.7)
-      .to(dropMesh.position, { y: 0.2, scaleX: 1, scaleY: 1, ease: "none" }, 0.7)
-      .to(cosmeticGroup.position, { x: -1.2, y: 0, z: 2.2, ease: "none" }, 0.7)
-      .to(cosmeticGroup.rotation, { y: Math.PI * 2.2, x: 0, ease: "none" }, 0.7);
+        // Stage 3: Return pipette into bottle & center for showcase (Soie -> Boutique)
+        .to(pipetteGroup.position, { y: 0, ease: "none" }, 0.7)
+        .to(dropMesh.position, { y: 0.2, scaleX: 1, scaleY: 1, ease: "none" }, 0.7)
+        .to(cosmeticGroup.position, { x: -1.2, y: 0, z: 2.2, ease: "none" }, 0.7)
+        .to(cosmeticGroup.rotation, { y: Math.PI * 2.2, x: 0, ease: "none" }, 0.7);
+    }
 
     // --- CURSOR TRACKING ---
     const cursor = { x: 0, y: 0, targetX: 0, targetY: 0 };
@@ -479,21 +602,23 @@
     const clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
-      const time = clock.getElapsedTime();
 
-      // Damped Cursor
-      cursor.x += (cursor.targetX - cursor.x) * 0.05;
-      cursor.y += (cursor.targetY - cursor.y) * 0.05;
+      if (!prefersReducedMotion) {
+        const time = clock.getElapsedTime();
+        // Damped Cursor
+        cursor.x += (cursor.targetX - cursor.x) * 0.05;
+        cursor.y += (cursor.targetY - cursor.y) * 0.05;
 
-      // Soft light follow
-      cursorLight.position.set(cursor.x * 5, cursor.y * 4, 3);
+        // Soft light follow
+        cursorLight.position.set(cursor.x * 5, cursor.y * 4, 3);
 
-      // Subtle breathing float
-      cosmeticGroup.position.y += Math.sin(time * 1.2) * 0.0015;
-      cosmeticGroup.rotation.y += 0.003;
+        // Subtle breathing float & auto-rotation
+        cosmeticGroup.position.y += Math.sin(time * 1.2) * 0.0015;
+        cosmeticGroup.rotation.y += 0.003;
 
-      // Ribbon undulating wave
-      ribbonGroup.rotation.x = Math.sin(time * 0.6) * 0.15;
+        // Ribbon undulating wave
+        ribbonGroup.rotation.x = Math.sin(time * 0.6) * 0.15;
+      }
 
       renderer.render(scene, camera);
     }
@@ -506,6 +631,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
+  }
   </script>
 </body>
 </html>

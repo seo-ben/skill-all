@@ -57,6 +57,15 @@
       font-feature-settings: "kern" 1, "liga" 1, "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     html {
       background-color: var(--bg);
       color: var(--text-main);
@@ -2077,14 +2086,17 @@
     });
 
     // B. Hero 3D Parallax Scrubbing (100% Réversible au scroll haut et bas)
-    const heroTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".hero-section",
-        start: "top top",
-        end: "bottom top",
-        scrub: 1.0 // Synchronisation bidirectionnelle exacte avec le scroll
-      }
-    });
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const heroTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.0 // Synchronisation bidirectionnelle exacte avec le scroll
+        }
+      });
 
     heroTimeline
       .to(".hero-content", { y: -80, opacity: 0.75, ease: "none" }, 0)
@@ -2379,6 +2391,15 @@
         }
       );
     }
+    });
+
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      ScrollTrigger.getAll().forEach(st => {
+        if (st.vars.pin) {
+          st.kill(false);
+        }
+      });
+    });
 
     /* --------------------------------------------------------------------------
        2. INTERACTIVE 3D CARD TILT & MULTI-PLANAR SPOTLIGHT (THE AWWARDS STANDARD)

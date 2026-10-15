@@ -44,6 +44,55 @@
       pointer-events: none;
     }
 
+    /* 2D Accessible WebGL Fallback */
+    .webgl-fallback {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      background: radial-gradient(circle at 65% 40%, rgba(212, 175, 55, 0.12) 0%, rgba(7, 7, 7, 0.96) 75%);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .fallback-card {
+      max-width: 440px;
+      padding: 2rem 2.5rem;
+      background: rgba(18, 18, 20, 0.9);
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 16px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .fallback-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #d4af37;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .fallback-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #a1a1aa;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     /* Navigation */
     nav {
       position: fixed;
@@ -181,8 +230,14 @@
 </head>
 <body>
 
-  <!-- WebGL Canvas -->
-  <canvas id="webgl-canvas"></canvas>
+  <!-- WebGL Canvas & Accessible 2D Fallback -->
+  <canvas id="webgl-canvas" role="img" aria-label="Visualisation 3D interactive du drapé haute couture et de l'anneau d'or"></canvas>
+  <div id="webgl-fallback" class="webgl-fallback">
+    <div class="fallback-card">
+      <span class="fallback-tag">Expérience Visuelle 2D</span>
+      <p>Drapé textile noir haute couture en mouvement avec anneau sculptural doré.</p>
+    </div>
+  </div>
 
   <!-- Navigation -->
   <nav>
@@ -257,22 +312,43 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    // --- THREE.JS SCENE SETUP ---
+    // --- ACCESSIBILITY & WEBGL AVAILABILITY TEST ---
+    function isWebGLAvailable() {
+      try {
+        const testCanvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    }
+
     const canvas = document.getElementById('webgl-canvas');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x070707, 0.06);
+    const fallback = document.getElementById('webgl-fallback');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 8);
+    if (!isWebGLAvailable()) {
+      canvas.style.display = 'none';
+      if (fallback) fallback.style.display = 'flex';
+    } else {
+      initThreeScene();
+    }
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    function initThreeScene() {
+      // --- THREE.JS SCENE SETUP ---
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x070707, 0.06);
+
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 8);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // --- LIGHTS ---
     const amb = new THREE.AmbientLight(0xffffff, 0.4);
@@ -324,29 +400,75 @@
 
     fashionGroup.position.set(1.5, 0, 0);
 
-    // --- BIDIRECTIONAL SCROLLTIMELINE ---
-    const fashionTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".scroll-container",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1.2
-      }
-    });
+    // --- SCROLL TIMELINE (ADAPTED FOR REDUCED-MOTION) ---
+    if (prefersReducedMotion) {
+      ScrollTrigger.create({
+        trigger: "#drape",
+        start: "top center",
+        onEnter: () => {
+          fashionGroup.position.set(-1.6, 0.2, 1.2);
+          clothMesh.rotation.set(0.3, -0.6, 0);
+          goldRing.scale.set(1.4, 1.4, 1.4);
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          fashionGroup.position.set(1.5, 0, 0);
+          clothMesh.rotation.set(0, 0.4, 0);
+          goldRing.scale.set(1, 1, 1);
+          renderer.render(scene, camera);
+        }
+      });
+      ScrollTrigger.create({
+        trigger: "#silhouette",
+        start: "top center",
+        onEnter: () => {
+          fashionGroup.position.set(1.8, -0.3, 1.8);
+          clothMesh.rotation.set(-0.2, 1.2, 0);
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          fashionGroup.position.set(-1.6, 0.2, 1.2);
+          clothMesh.rotation.set(0.3, -0.6, 0);
+          renderer.render(scene, camera);
+        }
+      });
+      ScrollTrigger.create({
+        trigger: "#boutique",
+        start: "top center",
+        onEnter: () => {
+          fashionGroup.position.set(-1.2, 0.1, 2.2);
+          clothMesh.rotation.set(0.1, 0.1, 0);
+          renderer.render(scene, camera);
+        },
+        onLeaveBack: () => {
+          fashionGroup.position.set(1.8, -0.3, 1.8);
+          renderer.render(scene, camera);
+        }
+      });
+    } else {
+      const fashionTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".scroll-container",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.2
+        }
+      });
 
-    fashionTl
-      // Stage 1: Drape moves to left and tilts (Look 01 -> Matière)
-      .to(fashionGroup.position, { x: -1.6, y: 0.2, z: 1.2, ease: "none" }, 0)
-      .to(clothMesh.rotation, { y: -0.6, x: 0.3, ease: "none" }, 0)
-      .to(goldRing.scale, { x: 1.4, y: 1.4, z: 1.4, ease: "none" }, 0)
+      fashionTl
+        // Stage 1: Drape moves to left and tilts (Look 01 -> Matière)
+        .to(fashionGroup.position, { x: -1.6, y: 0.2, z: 1.2, ease: "none" }, 0)
+        .to(clothMesh.rotation, { y: -0.6, x: 0.3, ease: "none" }, 0)
+        .to(goldRing.scale, { x: 1.4, y: 1.4, z: 1.4, ease: "none" }, 0)
 
-      // Stage 2: Camera orbits, cloth undulates (Matière -> Silhouette)
-      .to(fashionGroup.position, { x: 1.8, y: -0.3, z: 1.8, ease: "none" }, 0.4)
-      .to(clothMesh.rotation, { y: 1.2, x: -0.2, ease: "none" }, 0.4)
+        // Stage 2: Camera orbits, cloth undulates (Matière -> Silhouette)
+        .to(fashionGroup.position, { x: 1.8, y: -0.3, z: 1.8, ease: "none" }, 0.4)
+        .to(clothMesh.rotation, { y: 1.2, x: -0.2, ease: "none" }, 0.4)
 
-      // Stage 3: Silhouette re-centers (Silhouette -> Boutique)
-      .to(fashionGroup.position, { x: -1.2, y: 0.1, z: 2.2, ease: "none" }, 0.75)
-      .to(clothMesh.rotation, { y: 0.1, x: 0.1, ease: "none" }, 0.75);
+        // Stage 3: Silhouette re-centers (Silhouette -> Boutique)
+        .to(fashionGroup.position, { x: -1.2, y: 0.1, z: 2.2, ease: "none" }, 0.75)
+        .to(clothMesh.rotation, { y: 0.1, x: 0.1, ease: "none" }, 0.75);
+    }
 
     // --- CURSOR TRACKING ---
     const cursor = { x: 0, y: 0, targetX: 0, targetY: 0 };
@@ -360,36 +482,38 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      const time = clock.getElapsedTime();
 
-      // Damped Cursor
-      cursor.x += (cursor.targetX - cursor.x) * 0.05;
-      cursor.y += (cursor.targetY - cursor.y) * 0.05;
+      if (!prefersReducedMotion) {
+        const time = clock.getElapsedTime();
 
-      cursorLight.position.set(cursor.x * 5, cursor.y * 4, 3);
+        // Damped Cursor
+        cursor.x += (cursor.targetX - cursor.x) * 0.05;
+        cursor.y += (cursor.targetY - cursor.y) * 0.05;
 
-      // Parallax Tilt
-      fashionGroup.rotation.z = cursor.x * 0.12;
-      fashionGroup.position.y += Math.sin(time * 0.8) * 0.001;
+        cursorLight.position.set(cursor.x * 5, cursor.y * 4, 3);
 
-      // Realistic Wavy Cloth Simulation via Vertex Noise
-      const positions = clothGeom.attributes.position;
-      for (let i = 0; i < positions.count; i++) {
-        const u = initialPos[i * 3];
-        const v = initialPos[i * 3 + 1];
-        
-        // Sinusoidal wind waves + cursor influence
-        const waveZ = Math.sin(u * 1.5 + time * 2.0) * 0.25 + 
-                      Math.cos(v * 2.0 + time * 1.5) * 0.2 +
-                      (cursor.x * u * 0.15);
-        
-        positions.setZ(i, waveZ);
+        // Parallax Tilt
+        fashionGroup.rotation.z = cursor.x * 0.12;
+        fashionGroup.position.y += Math.sin(time * 0.8) * 0.001;
+
+        // Realistic Wavy Cloth Simulation via Vertex Noise
+        const positions = clothGeom.attributes.position;
+        for (let i = 0; i < positions.count; i++) {
+          const u = initialPos[i * 3];
+          const v = initialPos[i * 3 + 1];
+          
+          const waveZ = Math.sin(u * 1.5 + time * 2.0) * 0.25 + 
+                        Math.cos(v * 2.0 + time * 1.5) * 0.2 +
+                        (cursor.x * u * 0.15);
+          
+          positions.setZ(i, waveZ);
+        }
+        positions.needsUpdate = true;
+        clothGeom.computeVertexNormals();
+
+        // Slow gold ring rotation
+        goldRing.rotation.z += 0.005;
       }
-      positions.needsUpdate = true;
-      clothGeom.computeVertexNormals();
-
-      // Slow gold ring rotation
-      goldRing.rotation.z += 0.005;
 
       renderer.render(scene, camera);
     }
@@ -402,6 +526,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
+  }
   </script>
 </body>
 </html>
