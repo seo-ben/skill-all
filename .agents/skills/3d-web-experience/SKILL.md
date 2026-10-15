@@ -1,6 +1,6 @@
 ---
 name: 3d-web-experience
-description: Construct 3D spatial web experiences with real vectorial geometry, continuous orbital rotation, scrollytelling pinning, and editorial layouts. Use when building interactive 3D showcases, product configurators, or spatial landing pages with Three.js and GSAP. Do not use for simple 2D text pages, non-interactive canvas applications, or low-power embedded devices without WebGL support.
+description: Build 3D spatial web experiences and scrollytelling pages with Three.js and GSAP. Use when creating interactive 3D showcases, product configurators, or scrollytelling landing pages. Do not use for simple 2D websites or non-interactive canvas applications.
 ---
 
 # 3D Spatial Web Experience & Design Engine
