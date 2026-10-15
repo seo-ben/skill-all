@@ -80,7 +80,7 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
        // Scene setup, lighting, mesh creation, and animate() follow here...
      }
      ```
-   * If WebGL is unavailable or fails to initialize, display high-resolution fallback 2D imagery with equivalent descriptive text in the template language (`role="img"` and `aria-label="..."` on `#webgl-fallback`).
+   * If WebGL is unavailable or fails to initialize, display high-resolution fallback 2D imagery with equivalent descriptive text in the template language (`role="group"` and `aria-label="..."` on `#webgl-fallback` to preserve inner text accessibility).
    * Provide an `aria-label` or hidden descriptive text element (`<div class="sr-only">`) explaining the 3D subject for screen readers.
 2. **Prefers-Reduced-Motion** :
    * When `prefers-reduced-motion: reduce` is detected:
