@@ -459,37 +459,5 @@
     </div>
   </div>
 
-  <!-- GSAP & ScrollTrigger CDN (Pinned 3.12.2) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-  <script>
-    gsap.registerPlugin(ScrollTrigger);
-
-    const mm = gsap.matchMedia();
-
-    // Standard motion: subtle parallax on showcase frame
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.to(".hero-mockup-frame", {
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.0
-        },
-        y: 40,
-        ease: "none"
-      });
-    });
-
-    // Reduced motion: deactivate pinned and scrubbed ScrollTriggers
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      ScrollTrigger.getAll().forEach(st => {
-        if (st.vars.pin) {
-          st.kill(false);
-        }
-      });
-    });
-  </script>
 </body>
 </html>
