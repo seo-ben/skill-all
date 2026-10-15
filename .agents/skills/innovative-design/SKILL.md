@@ -1,6 +1,6 @@
 ---
 name: innovative-design
-description: Développe une identité visuelle indépendante et originale sans s'inspirer du design web contemporain, à travers 10 directions typographiques pures en HTML (A à J). À utiliser uniquement lorsque l'utilisateur demande explicitement une exploration créative originale, sans référence externe ou issue du sujet lui-même. Ne pas utiliser pour des interfaces SaaS conventionnelles, des corrections de bugs UI ou des composants isolés. Ne pas utiliser avec design-direction ; si les deux semblent applicables, demande à l'utilisateur lequel il préfère.
+description: Develop an independent, original visual language without drawing inspiration from contemporary web design, through 10 pure typography-led HTML directions (A through J). Use only when the user explicitly requests an original creative exploration without external references or derived solely from the subject matter itself. Do not use for conventional SaaS interfaces, UI bug fixes, or isolated small components. Do not use alongside design-direction; if both seem applicable, ask the user which one they prefer.
 ---
 
 # Innovative UX Designer V3

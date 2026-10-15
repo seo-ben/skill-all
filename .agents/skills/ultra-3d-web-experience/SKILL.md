@@ -1,26 +1,6 @@
 ---
 name: ultra-3d-web-experience
-description: Master engine for constructing award-winning 3D spatial websites with true vectorial (X, Y, Z) geometry, continuous orbital rotation, scrollytelling pinning, stacking cards choreography, and ultra-clean editorial layouts. Free of amateur boxes, cartoon primitives, or artificial labels.
-category: frontend-3d-motion
-version: 3.2.0
-author: Antigravity & Community
-tags:
-  - threejs-vector-space
-  - orbital-rotation-xyz
-  - pinned-scrollytelling
-  - stacking-cards
-  - zero-cartoon-primitives
-  - no-artificial-eyebrows
-  - dipa-inhouse-clean-saas
-  - outcrowd-tactile-clay
-  - roobinium-dark-luxury
-  - lerp-fluid-physics
-tools:
-  - antigravity
-  - claude-code
-  - cursor
-  - windsurf
-  - codex
+description: Construct 3D spatial web experiences with real vectorial geometry, continuous orbital rotation, scrollytelling pinning, and editorial layouts. Use when building interactive 3D showcases, product configurators, or spatial landing pages with Three.js and GSAP. Do not use for simple 2D text pages, non-interactive canvas applications, or low-power embedded devices without WebGL support.
 ---
 
 # ⚡ Ultra 3D Spatial Web Experience & Fluid Design Engine (Dribbble & Awwwards Standard)

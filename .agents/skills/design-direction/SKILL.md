@@ -1,6 +1,6 @@
 ---
 name: design-direction
-description: Guide et applique une direction de design d'interface haut de gamme, distinctive et accessible pour les applications web et mobiles. À utiliser pour concevoir des pages, des composants ou des identités d'interface complètes en équilibrant rigueur d'entreprise et impact visuel. Ne pas utiliser pour des corrections mineures de style ou pour des explorations d'art plastique sans contraintes fonctionnelles. Ne pas utiliser avec innovative-design ; si les deux semblent applicables, demander à l'utilisateur lequel il préfère.
+description: Guide and execute distinctive, high-end, and accessible interface design directions for web and mobile applications, balancing enterprise rigor with visual impact. Use when designing complete pages, components, or UI design systems. Do not use for minor styling bug fixes or pure art explorations without functional constraints. Do not use alongside innovative-design; if both seem applicable, ask the user which one they prefer.
 ---
 
 # Design Direction

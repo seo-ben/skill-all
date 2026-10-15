@@ -1,14 +1,6 @@
 ---
 name: design-audit
-description: >
-  Premium UI/UX design audit and refinement skill. Conducts systematic visual audits of existing
-  apps and produces phased, implementation-ready design plans. Use this skill whenever the user
-  asks to audit a UI, improve an app's visual design, make an interface feel more polished or
-  premium, review design consistency, fix visual hierarchy, or refine spacing/typography/color.
-  Also trigger when the user says "design review", "make it look better", "UI polish",
-  "visual refinement", "design pass", "audit the design", or references making an app feel
-  more professional. This skill is purely visual — it does not touch functionality, logic, or
-  features. It elevates what exists.
+description: Conduct systematic visual audits of existing web and mobile interfaces and produce phased, implementation-ready design plans. Use when reviewing design consistency, fixing visual hierarchy, refining spacing, typography, and color, or polishing an app's visual aesthetic. Do not use for adding new functional features, altering backend logic, or fixing code execution bugs.
 ---
 
 # Design Audit Skill

@@ -1,6 +1,6 @@
 ---
 name: motion-gsap
-description: Guide et met en œuvre des animations web performantes, du scroll interactif GSAP ScrollTrigger et des micro-interactions soignées. À utiliser pour concevoir des transitions fluides, des révélations cinétiques au scroll, des cartes interactives et des effets de mouvement 60 fps. Ne pas utiliser pour des sites documentaires purement textuels sans animation, ni pour des applications denses où le mouvement ralentit la saisie transactionnelle.
+description: Guide and implement performant web animations, interactive GSAP ScrollTrigger timelines, and refined micro-interactions at 60 fps. Use when crafting fluid view transitions, kinetic scroll reveals, interactive cards, and physics-based motion. Do not use for text-only documentation websites without animations, nor for data-dense applications where motion impedes transactional input efficiency.
 ---
 
 # Motion & GSAP Interaction
