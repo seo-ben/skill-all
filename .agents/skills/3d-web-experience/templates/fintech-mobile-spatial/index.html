@@ -64,6 +64,17 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
       }
+      .oval-ambient-ring,
+      .qr-laser-scanner,
+      .sonar-radar-ping {
+        animation: none !important;
+      }
+      .pro-stage-pod:hover,
+      .pro-stage-pod:hover .phone-showcase-wrapper img,
+      .phone-showcase-wrapper img:hover,
+      .fluid-card:hover {
+        transform: none !important;
+      }
     }
 
     html {
@@ -2074,6 +2085,7 @@
     const header = document.querySelector('header');
 
     window.addEventListener('scroll', () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY && currentScrollY > 120) {
         // Défilement vers le bas : la navbar s'efface discrètement vers le haut
@@ -2393,14 +2405,6 @@
     }
     });
 
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      ScrollTrigger.getAll().forEach(st => {
-        if (st.vars.pin) {
-          st.kill(false);
-        }
-      });
-    });
-
     /* --------------------------------------------------------------------------
        2. INTERACTIVE 3D CARD TILT & MULTI-PLANAR SPOTLIGHT (THE AWWARDS STANDARD)
        -------------------------------------------------------------------------- */
@@ -2408,6 +2412,7 @@
 
     fluidCards.forEach(card => {
       card.addEventListener('mousemove', (e) => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -2447,6 +2452,7 @@
       });
 
       card.addEventListener('mouseleave', () => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         gsap.to(card, { rotateX: 0, rotateY: 0, z: 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' });
         const badge = card.querySelector('.feature-floating-badge');
         if (badge) {
