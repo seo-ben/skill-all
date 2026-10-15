@@ -46,3 +46,7 @@ desktop.ini
 *.zip
 mon-projet-fintech/
 my-*/
+
+# Refactoring archives and reports (not to be published unless requested)
+_archive/
+_reports/
