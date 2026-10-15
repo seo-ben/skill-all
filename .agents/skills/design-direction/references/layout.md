@@ -67,3 +67,42 @@ Pour échapper à la disposition banale en 3 colonnes avec icône bleue au-dessu
 * **Décaler les colonnes** : Dans une section à deux colonnes, éviter le 50%/50% strict. Préférer un ratio 60%/40% ou 65%/35% pour créer une tension dynamique.
 * **Superposition contrôlée** : Laisser une carte ou une image déborder légèrement sur la section suivante (`transform: translateY(-20%)`) pour lier visuellement le récit de la page.
 * **Alternance des rythmes** : Ne pas enchaîner trois sections identiques de 3 cartes. Alterner : une section large immersive → une section asymétrique 2 colonnes → une grille condensée → un bandeau de citation typographique géante.
+
+---
+
+## 5. Protocole Anti-Uniformité (Force Variety / Anti-Sameness Protocol)
+
+Avant d'implémenter, forcer la diversité sur ces 5 dimensions pour éviter la convergence vers des interfaces prévisibles :
+
+1. **Température des couleurs** (Pile ou Face) :
+   * *Option A (Chaud)* : Palette chaleureuse (terre cuite, ocre ambré, écru, rouille).
+   * *Option B (Froid)* : Palette froide et minérale (ardoise, bleu glacier, menthe, anthracite).
+
+2. **Direction de la composition** (Tirage 1 à 4) :
+   1. Asymétrie dominante à gauche
+   2. Asymétrie dominante à droite
+   3. Centré dominant avec tension sur les bords
+   4. Flux diagonal ou éléments inclinés/décalés
+
+3. **Personnalité typographique** (Tirage 1 à 6) :
+   1. Sans-serif géométrique (tranchante, moderne)
+   2. Sans-serif humaniste (chaleureuse, accessible)
+   3. Serif éditoriale (littéraire, digne de confiance)
+   4. Slab serif (robuste, industrielle)
+   5. Display / décorative (très expressive, singulière)
+   6. Monospace (technique, systématique)
+
+4. **Philosophie de mouvement** (Tirage 1 à 3) :
+   1. Minimale (feedback essentiel uniquement)
+   2. Chorégraphiée (révélations orchestrées au scroll)
+   3. Ludique (rebonds subtils, personnalité)
+
+5. **Densité d'information** (Tirage 1 ou 2) :
+   1. Espaces négatifs généreux (luxe, respiration visuelle)
+   2. Densité contrôlée (éditoriale, riche en données)
+
+**Quand utiliser ce protocole :**
+* Au démarrage d'un nouveau projet sans charte graphique imposée.
+* En cas de sensation de blocage dans des motifs répétitifs.
+* Lorsque le brief est ouvert et nécessite une exploration créative avant engagement.
+
