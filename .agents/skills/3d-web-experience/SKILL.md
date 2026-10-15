@@ -54,7 +54,7 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
 ## 4. Accessibility & Inclusive Design
 
 1. **Alternative Without WebGL (Mandatory Fallback)** :
-   * Detect WebGL support prior to mounting the scene:
+   * Detect WebGL support and wrap renderer creation in `try/catch` to guarantee early exit before any camera triggers or animation loops execute:
      ```javascript
      function isWebGLAvailable() {
        try {
@@ -63,6 +63,25 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
        } catch (e) {
          return false;
        }
+     }
+
+     if (!isWebGLAvailable()) {
+       canvas.style.display = 'none';
+       fallback.style.display = 'flex';
+     } else {
+       initThreeScene();
+     }
+
+     function initThreeScene() {
+       let renderer;
+       try {
+         renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+       } catch (err) {
+         canvas.style.display = 'none';
+         fallback.style.display = 'flex';
+         return; // Exit early: no camera tweens, ScrollTriggers, or animation loop
+       }
+       // Scene setup, lighting, mesh creation, and animate() follow here...
      }
      ```
    * If WebGL is unavailable or fails to initialize, display high-resolution fallback 2D imagery with equivalent descriptive text.

@@ -423,6 +423,20 @@
     }
 
     function initThreeScene() {
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance"
+        });
+      } catch (e) {
+        canvas.style.display = 'none';
+        if (fallback) fallback.style.display = 'flex';
+        return;
+      }
+
       gsap.registerPlugin(ScrollTrigger);
 
       // --- THREE.JS SCENE SETUP ---
@@ -432,12 +446,6 @@
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
       camera.position.set(0, 0, 7.5);
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        alpha: true,
-        powerPreference: "high-performance"
-      });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 

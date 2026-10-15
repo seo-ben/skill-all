@@ -401,6 +401,20 @@
     }
 
     function initThreeScene() {
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance"
+        });
+      } catch (e) {
+        canvas.style.display = 'none';
+        if (fallback) fallback.style.display = 'flex';
+        return;
+      }
+
       // --- THREE.JS SCENE SETUP ---
       const scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0x0d0a08, 0.06);
@@ -408,12 +422,6 @@
       const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
       camera.position.set(0, 0, 8);
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        alpha: true,
-        powerPreference: "high-performance"
-      });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
