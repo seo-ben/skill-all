@@ -90,6 +90,9 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
       }
+      .orbit-icon {
+        animation: none !important;
+      }
     }
 
     /* Ambient Depth Glow (Background Layer) */
@@ -832,7 +835,18 @@
       ScrollTrigger.create({
         trigger: ".pinned-story-section",
         start: "top center",
+        end: "bottom center",
         onEnter: () => {
+          shoeMasterGroup.position.set(1.4, 0.3, 1.2);
+          shoeMasterGroup.rotation.set(-0.5, Math.PI * 2.8, 0.3);
+          renderer.render(scene, camera);
+        },
+        onLeave: () => {
+          shoeMasterGroup.position.set(0, 0.2, 2.2);
+          shoeMasterGroup.rotation.set(0.1, Math.PI * 4.0, 0);
+          renderer.render(scene, camera);
+        },
+        onEnterBack: () => {
           shoeMasterGroup.position.set(1.4, 0.3, 1.2);
           shoeMasterGroup.rotation.set(-0.5, Math.PI * 2.8, 0.3);
           renderer.render(scene, camera);
