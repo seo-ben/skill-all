@@ -131,38 +131,111 @@ function validate() {
     }
 
     // 5. Chemins relatifs cités existants (SKILL.md, references/ et templates/)
+    function getLineNumber(text, index) {
+      return text.slice(0, index).split('\n').length;
+    }
+
     function checkFileLinks(filePath, relBaseDir) {
       if (!fs.existsSync(filePath)) return;
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       const ext = path.extname(filePath).toLowerCase();
+      const relFile = path.relative(relBaseDir, filePath);
 
+      // A. Liens Markdown [label](target)
       if (ext === '.md') {
         const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
         let match;
         while ((match = linkRegex.exec(fileContent)) !== null) {
-          const target = match[2].trim().split('#')[0].trim();
+          const rawTarget = match[2].trim();
+          const line = getLineNumber(fileContent, match.index);
+          if (rawTarget.startsWith('file:///')) {
+            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            continue;
+          }
+          const target = rawTarget.split('#')[0].trim();
           if (!target || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('mailto:')) {
             continue;
           }
-          let targetPath = target.startsWith('file:///')
-            ? target.replace(/^file:\/\//, '')
-            : path.resolve(path.dirname(filePath), target);
+          const targetPath = path.resolve(path.dirname(filePath), target);
           if (!fs.existsSync(targetPath)) {
-            failures.push(`Lien rompu dans ${path.relative(relBaseDir, filePath)}: '${match[2]}' (introuvable: ${targetPath})`);
+            failures.push(`Lien rompu dans ${relFile} (ligne ${line}): '${match[2]}' (introuvable: ${targetPath})`);
           }
         }
-      } else if (ext === '.html') {
+      }
+
+      // B. Balises HTML src="..." et href="..."
+      if (ext === '.html') {
         const tagRegex = /(?:src|href)=["']([^"']+)["']/g;
         let match;
         while ((match = tagRegex.exec(fileContent)) !== null) {
-          const target = match[1].trim().split('#')[0].split('?')[0].trim();
+          const rawTarget = match[1].trim();
+          const line = getLineNumber(fileContent, match.index);
+          if (rawTarget.startsWith('file:///')) {
+            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            continue;
+          }
+          const target = rawTarget.split('#')[0].split('?')[0].trim();
           if (!target || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('data:') || target.startsWith('mailto:')) {
             continue;
           }
           const targetPath = path.resolve(path.dirname(filePath), target);
           if (!fs.existsSync(targetPath)) {
-            failures.push(`Asset rompu dans ${path.relative(relBaseDir, filePath)}: '${match[1]}' (introuvable: ${targetPath})`);
+            failures.push(`Asset HTML rompu dans ${relFile} (ligne ${line}): '${rawTarget}' (introuvable: ${targetPath})`);
           }
+        }
+      }
+
+      // C. Détection des url(...) CSS (dans .css ou blocs <style> de .html)
+      if (ext === '.css' || ext === '.html') {
+        const cssUrlRegex = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
+        let match;
+        while ((match = cssUrlRegex.exec(fileContent)) !== null) {
+          const rawTarget = match[1].trim();
+          const line = getLineNumber(fileContent, match.index);
+          if (rawTarget.startsWith('file:///')) {
+            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            continue;
+          }
+          const target = rawTarget.split('#')[0].split('?')[0].trim();
+          if (!target || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('data:') || target.startsWith('mailto:')) {
+            continue;
+          }
+          const targetPath = path.resolve(path.dirname(filePath), target);
+          if (!fs.existsSync(targetPath)) {
+            failures.push(`Asset CSS url() rompu dans ${relFile} (ligne ${line}): '${rawTarget}' (introuvable: ${targetPath})`);
+          }
+        }
+      }
+
+      // D. Détection des chaînes de chemins d'actifs 3D et images dans le code JS (.js ou blocs <script>)
+      function checkJsAssets(jsCode, baseOffset = 0) {
+        const jsAssetRegex = /['"]([^'"\s]+?\.(?:jpg|jpeg|png|webp|glb|gltf|hdr))['"]/gi;
+        let match;
+        while ((match = jsAssetRegex.exec(jsCode)) !== null) {
+          const rawTarget = match[1].trim();
+          const line = getLineNumber(fileContent, baseOffset + match.index);
+          if (rawTarget.startsWith('file:///')) {
+            failures.push(`Lien non portable 'file:///' interdit dans ${relFile} (ligne ${line}): '${rawTarget}'`);
+            continue;
+          }
+          const target = rawTarget.split('#')[0].split('?')[0].trim();
+          if (!target || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('data:')) {
+            continue;
+          }
+          const targetPath = path.resolve(path.dirname(filePath), target);
+          if (!fs.existsSync(targetPath)) {
+            failures.push(`Asset JS rompu dans ${relFile} (ligne ${line}): '${rawTarget}' (introuvable: ${targetPath})`);
+          }
+        }
+      }
+
+      if (ext === '.js') {
+        checkJsAssets(fileContent, 0);
+      } else if (ext === '.html') {
+        const scriptBlockRegex = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
+        let scriptMatch;
+        while ((scriptMatch = scriptBlockRegex.exec(fileContent)) !== null) {
+          checkJsAssets(scriptMatch[1], scriptMatch.index);
         }
       }
     }

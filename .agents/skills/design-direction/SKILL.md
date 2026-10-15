@@ -46,35 +46,35 @@ Pour concilier cohérence globale et souplesse créative, chaque directive fonct
 1. **Typographie de caractère** :
    * *Par défaut* : Éviter les polices par défaut du web (Inter, Roboto, Space Grotesk) comme typographies de titrage ; choisir des polices expressives (Syne, Fraunces, Outfit, Cabinet Grotesk).
    * *Exception* : Si la charte de marque de l'utilisateur impose déjà une police spécifique, la respecter et compenser par une mise en page et un tracking soignés.
-   * 👉 *Consulter [typography.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/typography.md) lors de la sélection des fontes et du calcul de l'échelle modulaire.*
+   * 👉 *Consulter [typography.md](references/typography.md) lors de la sélection des fontes et du calcul de l'échelle modulaire.*
 
 2. **Harmonie chromatique & Neutres chauds** :
    * *Par défaut* : Éviter le bleu SaaS standard (`#3B82F6`) et les dégradés violets sur blanc. Préférer des neutres teintés (ivoire, mastic, anthracite chaud) avec des accents tranchants.
    * *Exception* : Si le secteur d'activité ou l'identité existante exige du bleu, l'associer à des neutres profonds et des contrastes nets.
-   * 👉 *Consulter [color-and-contrast.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/color-and-contrast.md) pour les ratios de contraste, mesh gradients et textures.*
+   * 👉 *Consulter [color-and-contrast.md](references/color-and-contrast.md) pour les ratios de contraste, mesh gradients et textures.*
 
 3. **Mise en page spatiale & Grille 8pt** :
    * *Par défaut* : Structurer sur une grille modulaire de 8px avec des espaces négatifs généreux et des compositions asymétriques.
-   * 👉 *Consulter [layout.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/layout.md) pour les métaphores de cadrage spatial et les conteneurs.*
+   * 👉 *Consulter [layout.md](references/layout.md) pour les métaphores de cadrage spatial et les conteneurs.*
 
 4. **Clarté d'interaction & Profondeur** :
    * *Par défaut* : Interface épurée et fonctionnelle pour les outils denses ; profondeur atmosphérique (ombres diffuses, textures fines) pour les vitrines et landings. Proscrire le glassmorphism opaque générique.
-   * 👉 *Consulter [interaction.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/interaction.md) pour les états de boutons, la saisie et les retours d'état.*
+   * 👉 *Consulter [interaction.md](references/interaction.md) pour les états de boutons, la saisie et les retours d'état.*
 
 5. **Accessibilité universelle non négociable** :
    * Tout contenu doit être navigable au clavier, respecter le contraste WCAG AA (4.5:1 / 3:1) et inclure des étiquettes sémantiques complètes.
-   * 👉 *Consulter [accessibility.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/accessibility.md) pour la checklist de conformité WCAG AA et les modèles ARIA.*
+   * 👉 *Consulter [accessibility.md](references/accessibility.md) pour la checklist de conformité WCAG AA et les modèles ARIA.*
 
 6. **Adaptabilité multi-écrans** :
    * Penser d'abord mobile, puis déployer les enrichissements pour tablette et bureau avec des cibles tactiles minimales de 44x44px.
-   * 👉 *Consulter [responsive.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/responsive.md) pour les points de rupture et grilles adaptatives.*
+   * 👉 *Consulter [responsive.md](references/responsive.md) pour les points de rupture et grilles adaptatives.*
 
 7. **Structure du Design System** :
    * Définir des tokens clairs (couleurs, rayons, espacements, ombres) pour assurer la maintenabilité.
-   * 👉 *Consulter [design-system-template.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/design-system-template.md) pour l'architecture complète des tokens.*
+   * 👉 *Consulter [design-system-template.md](references/design-system-template.md) pour l'architecture complète des tokens.*
 
 8. **Gabarits & Études de Cas** :
-   * 👉 *Consulter [examples.md](file:///Users/tabtech/Documents/skill-all/.agents/skills/design-direction/references/examples.md) pour des modèles concrets de composants, de paires typographiques et de palettes.*
+   * 👉 *Consulter [examples.md](references/examples.md) pour des modèles concrets de composants, de paires typographiques et de palettes.*
 
 9. **Mouvement & Animations** :
    * Pour toute animation avancée, scroll cinétique ou intégration GSAP ScrollTrigger, se référer au skill dédié **`motion-gsap`**.
