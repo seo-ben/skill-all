@@ -25,7 +25,7 @@ When constructing a spatial experience, select an intentional aesthetic archetyp
 
 ## 2. Core Anti-Patterns
 
-1. **No Abstract Floating Shapes Without Purpose** : Every 3D model must represent a real product, hardware device, physical mechanism, or meaningful data visualization. Never place generic floating toruses or ribbons that serve no narrative function.
+1. **No Gratuitous Abstract Floating Shapes** : Every 3D model must serve the narrative or represent a physical subject. Procedural ribbons or concentric rings are appropriate when conveying domain dynamics (e.g. silk ribbons in hair-beauty cosmetics, gyroscope quantum rings in tech), but avoid arbitrary floating toruses or spheres disconnected from the subject.
 2. **No Heavy Artificial Frames** : The 3D canvas should be continuous, unboxed, and integrated into the layout flow (`position: fixed; inset: 0; pointer-events: none` or embedded within dedicated section containers).
 3. **No Raw Low-Fidelity Primitives** : Never combine unshaded primitive cubes and spheres as a substitute for real product geometry. Use detailed models or procedural geometries with PBR materials (`MeshPhysicalMaterial`, roughness, transmission).
 
@@ -37,7 +37,7 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
 
 1. **Stage 1: Hero in Open Space** :
    * The 3D subject floats in negative space alongside primary editorial typography.
-   * Smooth orbital rotation with a baseline dampening factor of `0.08` (retaining ~92% momentum).
+   * Smooth orbital rotation with a starting dampening factor (valeur de départ à ajuster : ~0.08).
 2. **Stage 2: Pinned Scrollytelling Timeline** :
    * The viewport pins (`ScrollTrigger: { pin: true, scrub: 1 }`) as the 3D subject rotates across vector axes $(X, Y, Z)$ while contextual annotations enter and exit.
 3. **Stage 3: Stacking Cards with Real Depth** :
@@ -81,23 +81,29 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
 1. **Semantic HTML Outside Canvas** :
    * All text content, headings (`<h1>`, `<h2>`), feature descriptions, and navigation links must exist as real semantic HTML elements in the DOM.
    * Never render critical crawlable text exclusively inside WebGL textures or canvas draw routines.
-2. **Descriptive Image & Canvas Fallbacks** :
-   * Include `<canvas role="img" aria-label="3D Interactive Product Model">` with semantic captions.
+2. **Visible Content Without JavaScript (No FOUC with opacity:0)** :
+   * Ensure critical HTML copy remains immediately visible when JavaScript is disabled.
+   * Avoid setting initial `opacity: 0` in raw static CSS on elements animated by GSAP; let GSAP hide or unmask elements dynamically during runtime initialization.
+3. **Core Web Vitals (LCP & CLS)** :
+   * Reserve layout space for the 3D canvas (e.g., explicit aspect-ratio or min-height) to prevent Cumulative Layout Shift (CLS = 0).
+   * Prioritize rendering above-the-fold HTML/CSS before initializing heavy WebGL scenes to preserve Largest Contentful Paint (LCP).
+4. **Descriptive Image & Canvas Fallbacks** :
+   * Include `<canvas role="img" aria-label="3D Interactive Product Model">` with semantic captions and accessible descriptions.
 
 ---
 
 ## 6. Performance Budget & Resource Limits
 
-1. **Asset Size Limits** :
-   * 3D Geometry: Compressed glTF/GLB models using Draco or Meshopt compression, keeping initial payload below **3 MB**.
-   * Textures: Maximum resolution of **2048x2048** for hero textures, **1024x1024** for secondary maps; prefer WebP or KTX2 formats.
+1. **Asset Size Limits (Starting Baselines / Valeurs de départ à ajuster)** :
+   * 3D Geometry: Compressed glTF/GLB models using Draco or Meshopt compression, targeting an initial payload (valeur de départ à ajuster : < 3 MB).
+   * Textures: Target resolutions (valeurs de départ à ajuster : 2048x2048 max for hero maps, 1024x1024 for secondary textures; prefer WebP or KTX2 formats).
 2. **Pixel Ratio & GPU Optimization** :
    * Cap device pixel ratio to prevent GPU overload on 3x/4x mobile screens:
      ```javascript
      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
      ```
 3. **Low-Power GPU Graceful Degradation** :
-   * Monitor frame rate with a moving average. If render loop falls below 30 fps, disable shadow maps (`renderer.shadowMap.enabled = false`), lower anti-aliasing, and reduce particle counts.
+   * Monitor frame rate with a moving average. If the render loop drops below a baseline threshold (valeur de départ à ajuster : < 30 fps), disable shadow maps (`renderer.shadowMap.enabled = false`), lower anti-aliasing, and reduce particle counts.
 4. **Memory Cleanup & Resource Teardown** :
    * On component unmount or route transition, dispose geometries, materials, and textures to prevent WebGL memory leaks, cancel the active `requestAnimationFrame` loop, and delegate ScrollTrigger cleanup to `motion-gsap`:
      ```javascript
