@@ -113,14 +113,13 @@ function validate() {
         failures.push(`'name' field (${fm.fields.name || 'none'}) does not match directory name (${dirName})`);
       }
 
-      // 3. description containing negative constraint
+      // 3. description containing 'Do not use'
       const desc = fm.fields.description || '';
       if (!desc) {
         failures.push("Missing description in frontmatter");
       } else {
-        const hasNegativeConstraint = /do not use|ne pas utiliser/i.test(desc);
-        if (!hasNegativeConstraint) {
-          failures.push("Description missing negative constraint ('Do not use' or 'Ne pas utiliser')");
+        if (!desc.includes('Do not use')) {
+          failures.push("Description missing required constraint ('Do not use')");
         }
       }
     }
