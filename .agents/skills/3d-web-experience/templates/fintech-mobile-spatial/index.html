@@ -673,19 +673,19 @@
       box-shadow: 0 42px 90px -18px rgba(0, 82, 255, 0.16), 0 6px 16px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff;
     }
 
-    /* Architectural Geometries (Oval, Squircle, Arch) */
+    /* Architectural Geometries (Oval, Squircle, Arch - Adaptable Baselines) */
     .shape-squircle-pod {
-      border-radius: 46px;
+      border-radius: clamp(32px, 5vw, 46px);
     }
 
     /* True Oval / Stadium shape */
     .shape-oval-stadium-pod {
-      border-radius: 130px / 85px;
+      border-radius: clamp(90px, 12vw, 130px) / clamp(65px, 8vw, 85px);
     }
 
     /* Oval Arch shape (Arched dome top, soft curved base) */
     .shape-oval-arch-pod {
-      border-radius: 170px 170px 46px 46px;
+      border-radius: clamp(120px, 15vw, 170px) clamp(120px, 15vw, 170px) clamp(32px, 5vw, 46px) clamp(32px, 5vw, 46px);
     }
 
     /* Ambient Orbital Dashed Ring in 3D Space */
@@ -1930,7 +1930,7 @@
     </section>
 
     <!-- ==========================================================================
-         FAQ SECTION (ACCORDION ULTRA-FLUIDE SPÉCIALISÉE MOBILE MONEY)
+         FAQ SECTION (ACCORDION INTERACTIVE SPÉCIALISÉE MOBILE MONEY)
          ========================================================================== -->
     <section class="faq-section" id="faq">
       <div class="section-header-centered">

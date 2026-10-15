@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * ULTRA 3D WEB EXPERIENCE — PROJECT SCAFFOLDER CLI
+ * 3D WEB EXPERIENCE — PROJECT SCAFFOLDER CLI
  * 
  * Usage:
  *   node scaffold-3d.js --preset <agency|tech|sneakers|hair-beauty|fashion> --out <dest_folder>
@@ -27,7 +27,7 @@ const PRESET_MAP = {
   'agency': {
     name: 'Creative & Design Agency 3D Experience',
     template: 'agency-creative',
-    description: 'Awwwards-grade portfolio with floating chromatic crystal, kinetic typography, and magnetic cursor.'
+    description: 'Studio portfolio with floating chromatic crystal, kinetic typography, and magnetic cursor.'
   },
   'tech': {
     name: 'Deep Tech & AI Quantum Core',
@@ -64,7 +64,7 @@ function parseArgs() {
       outDir = args[i + 1];
       i++;
     } else if (args[i] === '--list' || args[i] === '-l') {
-      console.log('\n🌟 Available Ultra 3D Presets:');
+      console.log('\nAvailable 3D Presets:');
       Object.entries(PRESET_MAP).forEach(([key, info]) => {
         console.log(`  - ${key.padEnd(14)} : ${info.name}`);
         console.log(`    ${info.description}`);
@@ -112,7 +112,7 @@ function main() {
 
   // Generate package.json for zero-config previewing
   const pkgJson = {
-    name: `ultra-3d-${preset}-site`,
+    name: `3d-${preset}-site`,
     version: "1.0.0",
     description: presetInfo.description,
     scripts: {
@@ -123,7 +123,7 @@ function main() {
   writeFileSync(join(targetDir, 'package.json'), JSON.stringify(pkgJson, null, 2));
 
   console.log('\n======================================================');
-  console.log(`✨ ULTRA 3D EXPERIENCE GÉNÉRÉE AVEC SUCCÈS !`);
+  console.log(`EXPÉRIENCE 3D GÉNÉRÉE AVEC SUCCÈS !`);
   console.log(`======================================================`);
   console.log(`📦 Preset   : ${presetInfo.name}`);
   console.log(`📁 Dossier  : ${targetDir}`);
