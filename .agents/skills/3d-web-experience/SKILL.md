@@ -54,37 +54,33 @@ The scrollytelling narrative unfolds across 4 distinct choreographic stages:
 ## 4. Accessibility & Inclusive Design
 
 1. **Alternative Without WebGL (Mandatory Fallback)** :
-   * Detect WebGL support and wrap renderer creation in `try/catch` to guarantee early exit before any camera triggers or animation loops execute:
+   * Wrap WebGL renderer creation in `try/catch` to guarantee early exit before any camera triggers, mesh creation, or animation loops execute:
      ```javascript
-     function isWebGLAvailable() {
-       try {
-         const canvas = document.createElement('canvas');
-         return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-       } catch (e) {
-         return false;
-       }
-     }
+     const canvas = document.getElementById('webgl-canvas');
+     const fallback = document.getElementById('webgl-fallback');
+     const sceneControls = document.querySelectorAll('.angle-hud, .hud-telemetry, .scene-controls');
 
-     if (!isWebGLAvailable()) {
-       canvas.style.display = 'none';
-       fallback.style.display = 'flex';
-     } else {
-       initThreeScene();
-     }
+     initThreeScene();
 
      function initThreeScene() {
        let renderer;
        try {
-         renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+         renderer = new THREE.WebGLRenderer({
+           canvas: canvas,
+           antialias: true,
+           alpha: true,
+           powerPreference: "high-performance"
+         });
        } catch (err) {
          canvas.style.display = 'none';
-         fallback.style.display = 'flex';
+         sceneControls.forEach(el => el.style.display = 'none');
+         if (fallback) fallback.style.display = 'flex';
          return; // Exit early: no camera tweens, ScrollTriggers, or animation loop
        }
        // Scene setup, lighting, mesh creation, and animate() follow here...
      }
      ```
-   * If WebGL is unavailable or fails to initialize, display high-resolution fallback 2D imagery with equivalent descriptive text.
+   * If WebGL is unavailable or fails to initialize, display high-resolution fallback 2D imagery with equivalent descriptive text in the template language (`role="img"` and `aria-label="..."` on `#webgl-fallback`).
    * Provide an `aria-label` or hidden descriptive text element (`<div class="sr-only">`) explaining the 3D subject for screen readers.
 2. **Prefers-Reduced-Motion** :
    * When `prefers-reduced-motion: reduce` is detected:

@@ -296,7 +296,7 @@
 
   <!-- WebGL Canvas & Accessible 2D Fallback -->
   <canvas id="webgl-canvas" role="img" aria-label="Visualisation 3D interactive du noyau quantique Synapse 09"></canvas>
-  <div id="webgl-fallback" class="webgl-fallback">
+  <div id="webgl-fallback" class="webgl-fallback" role="img" aria-label="Aperçu statique du cluster quantique Synapse 09">
     <div class="fallback-card">
       <span class="fallback-tag">Expérience Visuelle 2D</span>
       <p>Cluster d'inférence neuronale décentralisé Synapse 09 avec anneaux de confinement plasma.</p>
@@ -401,28 +401,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <script>
-    // --- ACCESSIBILITY & WEBGL AVAILABILITY TEST ---
-    function isWebGLAvailable() {
-      try {
-        const testCanvas = document.createElement('canvas');
-        return !!(window.WebGLRenderingContext && (testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')));
-      } catch (e) {
-        return false;
-      }
-    }
-
     const canvas = document.getElementById('webgl-canvas');
     const fallback = document.getElementById('webgl-fallback');
     const hud = document.querySelector('.hud-telemetry');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (!isWebGLAvailable()) {
-      canvas.style.display = 'none';
-      if (hud) hud.style.display = 'none';
-      if (fallback) fallback.style.display = 'flex';
-    } else {
-      initThreeScene();
-    }
+    initThreeScene();
 
     function initThreeScene() {
       let renderer;

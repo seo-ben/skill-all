@@ -470,7 +470,7 @@
   <!-- Interactive 3D Free-Orbit Canvas Layer & Accessible 2D Fallback -->
   <div class="interaction-overlay" id="drag-surface"></div>
   <canvas id="webgl-canvas" role="img" aria-label="Configurateur 3D interactif de la basket Aether Carbon One"></canvas>
-  <div id="webgl-fallback" class="webgl-fallback">
+  <div id="webgl-fallback" class="webgl-fallback" role="img" aria-label="Aperçu statique de la chaussure Aether Carbon One">
     <div class="fallback-card">
       <span class="fallback-tag">Expérience Visuelle 2D</span>
       <p>Modèle architectural de la chaussure Aether Carbon One avec semelle sculptée et amorti azote.</p>
@@ -602,30 +602,13 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    // --- ACCESSIBILITY & WEBGL AVAILABILITY TEST ---
-    function isWebGLAvailable() {
-      try {
-        const testCanvas = document.createElement('canvas');
-        return !!(window.WebGLRenderingContext && (testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')));
-      } catch (e) {
-        return false;
-      }
-    }
-
     const canvas = document.getElementById('webgl-canvas');
     const fallback = document.getElementById('webgl-fallback');
     const dragSurface = document.getElementById('drag-surface');
     const angleHud = document.querySelector('.angle-hud');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (!isWebGLAvailable()) {
-      canvas.style.display = 'none';
-      if (dragSurface) dragSurface.style.display = 'none';
-      if (angleHud) angleHud.style.display = 'none';
-      if (fallback) fallback.style.display = 'flex';
-    } else {
-      initThreeScene();
-    }
+    initThreeScene();
 
     function initThreeScene() {
       let renderer;
