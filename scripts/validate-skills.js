@@ -130,25 +130,72 @@ function validate() {
       failures.push(`Taille excessive: ${lines.length} lignes (> 400 lignes max)`);
     }
 
-    // 5. Chemins relatifs cités existants
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    let match;
-    while ((match = linkRegex.exec(content)) !== null) {
-      let target = match[2].trim();
-      // Ignorer ancres et liens web
-      if (target.startsWith('#') || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('mailto:')) {
-        continue;
+    // 5. Chemins relatifs cités existants (SKILL.md, references/ et templates/)
+    function checkFileLinks(filePath, relBaseDir) {
+      if (!fs.existsSync(filePath)) return;
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const ext = path.extname(filePath).toLowerCase();
+
+      if (ext === '.md') {
+        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+        let match;
+        while ((match = linkRegex.exec(fileContent)) !== null) {
+          const target = match[2].trim().split('#')[0].trim();
+          if (!target || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('mailto:')) {
+            continue;
+          }
+          let targetPath = target.startsWith('file:///')
+            ? target.replace(/^file:\/\//, '')
+            : path.resolve(path.dirname(filePath), target);
+          if (!fs.existsSync(targetPath)) {
+            failures.push(`Lien rompu dans ${path.relative(relBaseDir, filePath)}: '${match[2]}' (introuvable: ${targetPath})`);
+          }
+        }
+      } else if (ext === '.html') {
+        const tagRegex = /(?:src|href)=["']([^"']+)["']/g;
+        let match;
+        while ((match = tagRegex.exec(fileContent)) !== null) {
+          const target = match[1].trim().split('#')[0].split('?')[0].trim();
+          if (!target || target.startsWith('http://') || target.startsWith('https://') || target.startsWith('data:') || target.startsWith('mailto:')) {
+            continue;
+          }
+          const targetPath = path.resolve(path.dirname(filePath), target);
+          if (!fs.existsSync(targetPath)) {
+            failures.push(`Asset rompu dans ${path.relative(relBaseDir, filePath)}: '${match[1]}' (introuvable: ${targetPath})`);
+          }
+        }
       }
-      // Traitement des file:/// absolus ou chemins relatifs
-      let targetPath;
-      if (target.startsWith('file:///')) {
-        targetPath = target.replace('file://', '');
-      } else {
-        targetPath = path.resolve(skillPath, target);
+    }
+
+    // A. Vérification dans SKILL.md
+    checkFileLinks(skillFile, skillPath);
+
+    // B. Vérification récursive dans references/
+    const referencesDir = path.join(skillPath, 'references');
+    if (fs.existsSync(referencesDir)) {
+      const refFiles = fs.readdirSync(referencesDir, { withFileTypes: true });
+      for (const ref of refFiles) {
+        if (ref.isFile()) {
+          checkFileLinks(path.join(referencesDir, ref.name), skillPath);
+        }
       }
-      if (!fs.existsSync(targetPath)) {
-        failures.push(`Lien rompu: '${target}' (résolu: ${targetPath})`);
+    }
+
+    // C. Vérification récursive dans templates/
+    const templatesDir = path.join(skillPath, 'templates');
+    if (fs.existsSync(templatesDir)) {
+      function walkDir(dir) {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            walkDir(fullPath);
+          } else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.html'))) {
+            checkFileLinks(fullPath, skillPath);
+          }
+        }
       }
+      walkDir(templatesDir);
     }
 
     if (failures.length === 0) {
