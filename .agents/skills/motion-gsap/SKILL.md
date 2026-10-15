@@ -181,7 +181,7 @@ Bannir le tilt 3D et les curseurs personnalisés sur écrans tactiles :
 ```
 
 ### 3.3 Règle des 60 FPS & Démontage Propre
-* **Propriétés autorisées** : N'animer que `transform` (`translate3d`, `scale`, `rotate`) et `opacity`. Proscrire l'animation de `width`, `height`, `top`, `margin` qui forcent le recalcul du layout (*layout thrashing*).
+* **Propriétés autorisées** : N'animer que `transform` (`translate3d`, `scale`, `rotate`) et `opacity`. Proscrire l'animation de `width`, `height`, `top`, `margin` qui forcent le recalcul du layout (*layout thrashing*). Utiliser `will-change: transform` avec parcimonie sur les éléments en mouvement continu.
 * **Nettoyage ScrollTrigger** : Dans les composants dynamiques (React/Vue/Svelte), toujours détruire les triggers lors du démontage pour éviter les fuites mémoire :
 ```javascript
 // Au démontage du composant
