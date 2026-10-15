@@ -2101,14 +2101,14 @@
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const heroTimeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom top",
-            scrub: 1.0 // Synchronisation bidirectionnelle exacte avec le scroll
-          }
-        });
+      const heroTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.0 // Synchronisation bidirectionnelle exacte avec le scroll
+        }
+      });
 
       heroTimeline
         .to(".hero-content", { y: -80, opacity: 0.75, ease: "none" }, 0)
