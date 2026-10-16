@@ -15,6 +15,7 @@
 Skill-All fournit des ensembles d'instructions prêts pour la production, calibrés pour les agents de programmation IA. Au lieu de générer des interfaces répétitives au style arbitraire, les agents équipés de ces compétences appliquent des systèmes de design structurés, des échelles typographiques modulaires, des fallbacks accessibles en cas d'absence de WebGL et des chorégraphies de scroll réversibles sous GSAP.
 
 Le dépôt regroupe :
+
 * **6 compétences originales** spécialisées en design d'interface, typographie, animation et développement 3D.
 * **1 moteur de design système intégré** (`ui-ux-pro-max`).
 * **Des écosystèmes tiers de référence** regroupés sous `third-party/`, chacun documenté avec sa source et sa licence.
@@ -52,6 +53,7 @@ Si les deux approches semblent pertinentes, choisissez celle qui correspond à v
 La compétence `3d-web-experience` inclut 6 templates complets et exécutables, ainsi qu'un outil CLI d'échafaudage :
 
 ### Les 6 Templates Disponibles
+
 1. **`fintech`** (`fintech-mobile-spatial`) : Vitrine pour application mobile financière avec pods architecturaux en stade et scrollytelling CSS 3D.
 2. **`sneakers`** (`sneaker-configurator`) : Configurateur de chaussure 3D avec orbite libre, boutons d'angles et chorégraphie au scroll.
 3. **`agency`** (`agency-creative`) : Portfolio d'agence studio avec cristal chromatique en lévitation et typographie fluide.
@@ -96,6 +98,7 @@ Pour consulter le texte intégral des licences, la provenance de chaque dossier 
 ## Installation
 
 ### Installation Manuelle
+
 Copiez les compétences souhaitées depuis `.agents/skills/` dans votre environnement de travail :
 
 ```bash
@@ -110,6 +113,7 @@ cp -r .agents/skills/3d-web-experience ~/.claude/skills/
 ```
 
 ### Utilisation de la CLI Skills
+
 Si vous utilisez la CLI `skills` de Vercel Labs :
 
 ```bash
@@ -124,5 +128,5 @@ npx skills add https://github.com/seo-ben/skill-all --skill 3d-web-experience
 
 ## Licence
 
-* Le contenu original du dépôt est distribué sous [Licence MIT](./LICENSE) © 2026 TAB TECH.
+* Le contenu original du dépôt est distribué sous [Licence MIT](./LICENSE) © 2026 SEWONET.
 * Les composants tiers conservent leurs licences respectives documentées dans [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).

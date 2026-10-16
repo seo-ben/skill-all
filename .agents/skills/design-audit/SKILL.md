@@ -62,6 +62,8 @@ For every element on every screen:
 - Would a user need to be told this exists? → Redesign until obvious.
 - Does this feel inevitable? → If not, it's not done.
 - Is visual weight proportional to functional importance? → If not, fix hierarchy.
+- Are there decorative eyebrows, category kickers above titles, or floating badges/stickers on images? → Remove them immediately.
+- Is Cormorant Garamond or any fragile hairline serif used? → Replace with a robust, contemporary grotesque or clean display font.
 
 ### Step 3: Compile the Plan
 

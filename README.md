@@ -15,6 +15,7 @@
 Skill-All provides production-ready instruction sets (skills) designed for AI coding agents. Rather than producing generic, boilerplate interfaces with arbitrary styling, agents equipped with these skills follow structured design systems, typographic scales, accessible WebGL fallbacks, and reversible GSAP scroll choreographies.
 
 The repository contains:
+
 * **6 original, specialized skills** in interface design, motion, typography, and 3D web development.
 * **1 embedded design system engine** (`ui-ux-pro-max`).
 * **Third-party reference ecosystems** maintained in `third-party/` with individual source notices.
@@ -52,6 +53,7 @@ If both seem applicable, select the one that matches the primary goal: product u
 The `3d-web-experience` skill includes 6 complete, runnable templates and an integrated scaffolding CLI:
 
 ### Available Templates
+
 1. **`fintech`** (`fintech-mobile-spatial`): Mobile financial app showcase with architectural stage pods and CSS 3D scrollytelling.
 2. **`sneakers`** (`sneaker-configurator`): 3D sneaker showcase with continuous orbit, angle HUD switcher, and scroll choreography.
 3. **`agency`** (`agency-creative`): Studio agency portfolio with kinetic floating crystal and fluid typography.
@@ -96,6 +98,7 @@ For complete license texts, provenance details, and notes regarding Anthropic do
 ## Installation
 
 ### Manual Installation
+
 Copy the desired skills from `.agents/skills/` into your target environment:
 
 ```bash
@@ -110,6 +113,7 @@ cp -r .agents/skills/3d-web-experience ~/.claude/skills/
 ```
 
 ### Using the Skills CLI
+
 If you use the `skills` CLI from Vercel Labs:
 
 ```bash
@@ -124,5 +128,5 @@ npx skills add https://github.com/seo-ben/skill-all --skill 3d-web-experience
 
 ## License
 
-* Original repository content is licensed under the [MIT License](./LICENSE) © 2026 TAB TECH.
+* Original repository content is licensed under the [MIT License](./LICENSE) © 2026 SEWONET.
 * Third-party components retain their upstream licenses as documented in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).

@@ -10,14 +10,16 @@ La typographie est l'armature principale de toute identité visuelle.
 
 ### 1.1 Règle par défaut pour le choix des fontes
 * **Éviter par défaut les polices banalisées en titrage** : Inter, Roboto, Arial, Helvetica, Space Grotesk sont massivement générées par les LLMs et les gabarits SaaS interchangeables.
-* **Privilégier un binôme de caractère** :
-  - **Police Display / Titre** : Choisir une typographie expressive, singulière et immédiatement mémorable (ex: Syne, Fraunces, Plus Jakarta Sans, Outfit, Cabinet Grotesk, Clash Display, Newsreader, Cormorant Garamond).
+* **Interdiction stricte des serifs fragiles / académiques (Anti-pattern)** : Ne JAMAIS utiliser Cormorant Garamond, Times New Roman, ou des serifs hairlines de livre. Ils nuisent à la lisibilité sur écran, vieillissent l'interface et renvoient une image académique poussiéreuse.
+* **Interdiction des étiquettes / eyebrows de titrage** : Aucun micro-label au-dessus ou sous les titres.
+* **Privilégier un binôme de caractère contemporain** :
+  - **Police Display / Titre** : Choisir une typographie expressive, singulière et immédiatement mémorable (ex: Plus Jakarta Sans, Outfit, Syne, Cabinet Grotesk, Clash Display, Fraunces).
   - **Police de Corps (Body)** : Choisir une fonte très lisible, optimisée pour les longs paragraphes et les tailles denses (14px - 16px), avec un excellent espacement de caractères (ex: Plus Jakarta Sans, Satoshi, DM Sans, Source Sans 3).
 * **Maximum 2 à 3 fontes** : Une display, une de corps, et éventuellement une monospace stylisée pour la donnée ou le code.
 * **3 graisses maximum par famille** : ex. Regular (400), Medium (500), Bold (700) pour préserver le poids de la page.
 
 ### 1.2 Exceptions justifiées
-* **Charte client imposée** : Si le projet s'intègre dans un système préexistant imposant Inter ou Roboto, l'utiliser, mais compenser par une échelle de corps audacieuse, un travail de tracking rigoureux et des contrastes de graisses affirmés.
+* **Charte client imposée** : Si le projet s'intègre dans un système préexistant imposant une police spécifique, l'utiliser avec un travail de tracking rigoureux et des contrastes de graisses affirmés.
 * **Performance extrême / Systèmes embarqués** : Si aucun chargement réseau de fonte n'est toléré, utiliser la stack système moderne (`system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`) et documenter la contrainte.
 
 ---

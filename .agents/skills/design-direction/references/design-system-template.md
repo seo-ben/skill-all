@@ -237,9 +237,9 @@ Why: Single-font system = modern, efficient, cohesive
 
 **Project C: Luxury Brand**
 ```
-Headline: Cormorant Garamond (Serif, Light 300)
-Body: Lato (Sans-serif, Regular 400)
-Why: Elegant serif + readable sans = sophisticated
+Headline: Plus Jakarta Sans (Geometric Grotesque, Medium 500 / SemiBold 600, tracked)
+Body: Plus Jakarta Sans (Regular 400)
+Why: Modern architectural grotesque with noble letterspacing = contemporary haute couture luxury (never fragile hairline serifs like Cormorant Garamond)
 ```
 
 ### 3. Tone of Voice

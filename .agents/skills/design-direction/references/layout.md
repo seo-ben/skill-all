@@ -133,3 +133,21 @@ Avant d'implémenter, forcer la diversité sur ces 5 dimensions pour éviter la 
 * En cas de sensation de blocage dans des motifs répétitifs.
 * Lorsque le brief est ouvert et nécessite une exploration créative avant engagement.
 
+---
+
+## 6. Règle Fondamentale Anti-Cliché : Interdiction des Labels, Eyebrows et Badges Décoratifs
+
+Une mauvaise habitude récurrente des gabarits IA et du web marketing interchangeable consiste à encombrer les interfaces de micro-étiquettes. Cette pratique est strictement proscrite :
+
+1. **Interdiction des "Eyebrows" / Kickers au-dessus des titres** :
+   * Ne JAMAIS placer de petit label en majuscules au-dessus d'un titre H1, H2 ou H3 (ex: "COLLECTION 2026", "SERVICE EXCLUSIF", "NOTRE HISTOIRE", "DÉCOUVREZ", "FONCTIONNALITÉS").
+   * **Raison** : Un titre bien rédigé et sculpté typographiquement se suffit à lui-même. L'eyebrow dilue l'impact visuel et crée un bruit parasite d'agence marketing dépassée.
+
+2. **Interdiction des labels sous les titres** :
+   * Ne pas ajouter de mini-étiquettes de classification sous un titre avant le paragraphe.
+
+3. **Interdiction absolue des badges et pilules flottants sur les images / 3D** :
+   * Ne JAMAIS superposer de badge flottant (pill badge, sticker, macaron, sceau rond) sur des photographies, des vidéos ou des canvas 3D (ex: "CRÉATION 3D INTERACTIVE", "SAVOIR-FAIRE POINT SELLIER", "NOUVEAUTÉ", "POPULAIRE", "COUP DE CŒUR").
+   * **Raison** : L'image et l'objet 3D doivent vivre dans leur pureté plastique sans être défigurés par des autocollants graphiques parasites. Le grand design (Apple, Hermès, Bottega Veneta, Saint Laurent) laisse parler le produit et l'espace négatif.
+
+

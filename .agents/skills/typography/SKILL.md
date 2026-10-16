@@ -213,6 +213,8 @@ for most uses. `font-variant-numeric: tabular-nums lining-nums` for numeric tabl
 3. Print body: strongly prefer serif
 4. Web body: serif or sans both fine on modern screens
 5. Metrics spacing in InDesign, never optical (optical mangles kerning)
+6. Never use fragile hairline serifs (e.g. Cormorant Garamond, Times New Roman) for UI or headings on digital products — they render poorly on screens, look dated, and create an obsolete academic aesthetic
+7. No decorative category eyebrows, pills, or floating label tags above or below headings
 
 ### Mixing Fonts
 
